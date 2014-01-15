@@ -1,5 +1,5 @@
-#ifndef _OGLMATH_H
-#define _OGLMATH_H
+#ifndef _MATGL_H
+#define _MATGL_H
 
 #include "rglMathType.h"
 #include "rglMath3D.h"
