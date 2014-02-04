@@ -12,18 +12,18 @@ GLint  rglFrustum(rglMat4 dest,GLfloat left, GLfloat right, GLfloat bottom, GLfl
         dest[3] = 0.0;
 
        dest[4] = 0.0;
-       dest[5] = (2 * zNear / (top - bottom));
+       dest[5] = (2.0 * zNear / (top - bottom));
        dest[6] = 0.0;
        dest[7] = 0.0;
 
        dest[8] = ((right + left) / (right - left));
        dest[9] = ((top + bottom) / (top - bottom));
        dest[10] = -((zFar + zNear) / (zFar - zNear));
-       dest[11] = -1;
+       dest[11] = -1.0;
 
        dest[12] = 0.0;
        dest[13]= 0.0;
-       dest[14] = -(2 * zFar * zNear / (zFar - zNear));
+       dest[14] = -(2.0 * zFar * zNear / (zFar - zNear));
        dest[15] = 0.0;	
 	return 1;
 	
