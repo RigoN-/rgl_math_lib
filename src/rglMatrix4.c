@@ -39,6 +39,23 @@ GLint rglMatrix4MulFloat(rglMat4 src, GLfloat f)
 	return 1;
 }
 
+GLint rglMatrix4MulVector2(const rglMat4 m, rglVec2 *v2)
+{
+	v2->x = v2->x * m[0] + v2->y * m[4] + m[8] + m[12];
+    v2->y = v2.x * m[1] + v3.y * m[5] + m[9] + m[13]; 
+	return 1;
+}
+GLint rglMatrix4MulVector3(const rglMat4 m, rglVec3 *v3)
+{
+	return 1;
+}
+GLint rglMatrix4MulVector4(const rglMat4 m, rglVec4 *v4)
+{
+	return 1;
+}
+
+
+
 
 GLint rglMatrix4Transpose(rglMat4 dest, rglMat4 m2) 
 {

@@ -83,7 +83,6 @@ struct rglVec3 {
 } ;
 typedef struct  rglVec3  rglVec3_t;
 
-
 struct rglTex3 {
     GLfloat s;
 	GLfloat t;  
