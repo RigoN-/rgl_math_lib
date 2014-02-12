@@ -6,7 +6,8 @@ http://math.semestr.ru/matrix/vector-basis.php
 http://www.webmath.ru/poleznoe/formules_4_1.php
 http://www.webmath.ru/web.php
 
-матрицы примеры
+Матрицы примеры
+
 http://matrixcalc.org/
 http://ru.onlinemschool.com/math/assistance/equation/matr/
 http://ru.onlinemschool.com/math/assistance/matrix/inverse1/
