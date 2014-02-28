@@ -148,7 +148,7 @@ GLint rglMatrix4Adjoin(rglMat4 dest, rglMat4 src)
 	for (n=0;n<16;n+=1)
 	{
 		j=n/4; i=n%4;
-		if (i%2!=i%2) 		
+		if (j%2!=i%2) 		
 			dest[n]=rglMatrix4Minorf(src,n);			
 		else
 			dest[n]=-rglMatrix4Minorf(src,n);
