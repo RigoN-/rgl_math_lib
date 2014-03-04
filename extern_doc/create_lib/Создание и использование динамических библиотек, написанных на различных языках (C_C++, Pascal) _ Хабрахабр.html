@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width = 1080">
+    
+    <title>Создание и использование динамических библиотек, написанных на различных языках (C/C++, Pascal) / Хабрахабр</title>
+    <meta name="description" content="Задача
+Передо мной возникла задача написать загрузчик библиотек, имеющий возможность предоставить какие-то интерфейсные функции внешней динамической библиотеке. Решение должно быть максимально...">    
+    <meta name="keywords" content="gcc, fpc, dll, so, linux, windows, free pascal">
+    
+    	<meta property="fb:app_id" content="444736788986613"> 
+<meta property="og:type" content="article"> 
+<meta property="og:url" content="http://habrahabr.ru/post/122757/"> 
+<meta property="og:title" content="Создание и использование динамических библиотек, написанных на различных языках (C/C++, Pascal)"> 
+	
+	<meta property="og:image" content="http://habrahabr.ru/i/habralogo.jpg">
+	<link rel="image_src" href="http://habrahabr.ru/i/habralogo.jpg">
+<meta property="og:description" content="Задача Передо мной возникла задача написать загрузчик библиотек, имеющий возможность предоставить какие-то интерфейсные функции внешней динамической библиотеке.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@habrahabr">
+
+    <script src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/watch.js" async="" type="text/javascript"></script><script type="text/javascript">function adriver(a,b){};</script>
+      <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/all.css" rel="stylesheet" media="all">
+
+
+      <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/posts.css" rel="stylesheet" media="all">
+  <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/comments.css" rel="stylesheet" media="all">
+  <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/forms.css" rel="stylesheet" media="all">
+  <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/highlight.css" rel="stylesheet" media="all">
+  
+    <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/printer.css" rel="stylesheet" media="print">
+
+    
+    
+
+      <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/all_002.js"></script>
+    
+    
+    
+
+  
+  
+  
+  
+      <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/jquery_002.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/jquery.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/wysiwyg.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/highlight.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/jquery-ui-highlight.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/posts.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/comments.js"></script>
+  <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/all.js"></script>
+
+
+
+  	<script type="text/javascript">
+	  var crtg_nid="2580";
+	  var crtg_cookiename="cto_rtt";
+	  var crtg_varname="crtg_content";
+	  function crtg_getCookie(c_name){
+		  var i,x,y,ARRCookies=document.cookie.split(";");
+		  for(i=0;i<ARRCookies.length;i++){
+			  x=ARRCookies[i].substr(0,ARRCookies[i].indexOf("="));
+			  y=ARRCookies[i].substr(ARRCookies[i].indexOf("=")+1);
+			  x=x.replace(/^\s+|\s+$/g,"");
+			  if(x==c_name){return unescape(y);}
+		   }
+		return'';
+	   }
+	var crtg_content = crtg_getCookie(crtg_cookiename);var crtg_rnd=Math.floor(Math.random()*99999999999);
+		var crtg_url=location.protocol+'//rtax.criteo.com/delivery/rta/rta.js?netId='+escape(crtg_nid);crtg_url+='&cookieName='+escape(crtg_cookiename);crtg_url+='&rnd='+crtg_rnd;crtg_url+='&varName=' + escape(crtg_varname);
+		var crtg_script=document.createElement('script');crtg_script.type='text/javascript';crtg_script.src=crtg_url;crtg_script.async=true;
+		if(document.getElementsByTagName("head").length>0)document.getElementsByTagName("head")[0].appendChild(crtg_script);
+		else
+		if(document.getElementsByTagName("body").length>0)document.getElementsByTagName("body")[0].appendChild(crtg_script);
+	</script><script async="" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/rta.js" type="text/javascript"></script>
+
+      <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/adriver.js"></script>
+
+    <link title="Хабрахабр / Комментарии к публикации «Создание и использование динамических библиотек, написанных на различных языках (C/C++, Pascal)»" type="application/rss+xml" rel="alternate" href="http://habrahabr.ru/rss/post/122757/">
+        
+      <script type="text/javascript">
+      var _gaq = window._gaq || [];
+      window.onerror = function(msg, url, line) {
+          //var preventErrorAlert = true;
+          //_gaq.push(['_trackEvent', 'JS Error', msg, navigator.userAgent + ' -> ' + url + " : " + line]);
+          //return preventErrorAlert;
+      };
+      
+      jQuery.error = function (message) {
+          _gaq.push(['_trackEvent', 'jQuery Error', message, navigator.userAgent]);
+      }
+      </script>
+       
+  <script src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/ga.js" async="true"></script></head>
+
+  <body>
+   <div class="wrapper">
+      
+      <div id="layout">
+        <div id="header">
+    <div class="userpanel silver">
+      <a href="https://auth.habrahabr.ru/login/" id="login" class="login">войти через TM ID</a>
+  </div>
+  <a class="logo " href="http://habrahabr.ru/" title="На главную страницу"></a>
+  <div class="search">
+    <form id="search_form" name="search" method="get" action="//habrahabr.ru/search/">
+      <input value="" type="submit">
+      <input autocomplete="off" name="q" x-webkit-speech="" speech="" tabindex="1" type="text">
+    </form>
+  </div>
+
+	<div class="main_menu">
+		<a href="http://habrahabr.ru/posts/top/" class="active">посты</a><a href="http://toster.ru/">q&amp;a</a><a href="http://habrahabr.ru/events/coming/">события</a><a href="http://habrahabr.ru/hubs/">хабы</a><a href="http://habrahabr.ru/companies/">компании</a>
+		<div class="banner_special">
+
+		<script type="text/javascript">
+			(function(){
+				var custom = [];
+				/* custom params */
+					custom[1] = 'programming';
+				/* end of custom params */
+				var std = {gender:100, age:101},i;for(i in std){try{custom[std[i]]=eval(i)}catch(e){} }
+				custom.getStd = function(){for(var i=0,j,s=[];i<this.length;i++){if(this[i])s.push((!j?(j=1,i+'='):'')+escape(this[i]));else j=0}return s.length?'&custom='+s.join(';'):''};
+				var RndNum4NoCash = Math.round(Math.random() * 1000000000), ar_Tail = escape(document.referrer || 'unknown');
+				document.write('<iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?' + 'sid=176776&target=top&w=135&h=35&bt=25&pz=0&rnd=' +
+				RndNum4NoCash + '&tail256=' + ar_Tail + custom.getStd() + '" frameborder=0 vspace=0 hspace=0 width=135 height=35 marginwidth=0'
+				+ ' marginheight=0 scrolling=no></iframe>');
+			})();
+ 		</script><iframe class="xctojuhmzdefxuzdqsbl" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/erle.html" vspace="0" hspace="0" marginwidth="0" marginheight="0" frameborder="0" height="35" scrolling="no" width="135"></iframe>
+	
+
+</div>
+		
+	</div>
+
+</div>
+
+
+
+        
+        
+
+	
+  <div class="content_left">
+
+	
+
+
+
+
+
+
+
+
+	
+  <div class="post shortcuts_item" id="post_122757">
+  	<div class="published">27 июня 2011 в 12:11</div>  
+    <h1 class="title">
+    
+      
+      
+
+      
+        <span class="post_title">Создание и использование динамических библиотек, написанных на различных языках (C/C++, Pascal)</span>
+			
+  		<a href="http://habrahabr.ru/sandbox/" class="flag flag_sandbox" title="Перейти в песочницу">из песочницы</a>
+			
+			
+
+  	</h1>
+  	
+  	<div class="hubs">
+		<a href="http://habrahabr.ru/hub/programming/" class="hub " title="Вы не подписаны на этот хаб">Программирование</a><span class="profiled_hub" title="Профильный хаб">*</span>
+</div>
+
+  	
+    <div class="content html_format">
+			<h4>Задача</h4><br>
+Передо мной возникла задача написать загрузчик библиотек, имеющий 
+возможность предоставить какие-то интерфейсные функции внешней 
+динамической библиотеке. Решение должно быть максимально 
+кроссплатформенно (как минимум, работать на Linux и Windows). 
+Загружаться должны библиотеки, написанные на различных языках 
+программирования, поддерживающих создание динамических библиотек. В 
+качестве примера были выбраны языки C и Pascal.<br>
+<br>
+<h4>Решение</h4><br>
+Основной загрузчик библиотек написан на языке C. Для того, чтобы 
+загружаемые библиотеки имели возможность использовать функции основной 
+программы, основная программа разделена на 2 части: на основной и 
+подгружаемый модули. Основной модуль нужен просто для запуска программы,
+ подгружаемый модуль — это также динамическая библиотека, связываемая с 
+основным модулем во время его запуска. В качестве компиляторов были 
+выбраны gcc (MinGW для Windows) и fpc. <br>
+Здесь будет приведён упрощённый пример программы, позволяющий 
+разобраться в данном вопросе и учить первокурсников писать модули к 
+своей программе (в школе часто преподают именно Pascal).<br>
+<a name="habracut"></a><br>
+<br>
+<h5>Загрузчик библиотек</h5><br>
+Главный файл загрузчика библиотек выглядит очень просто:<br>
+<h6>main.c</h6><br>
+<pre><code class="cpp"><span class="preprocessor">#include "loader.h"</span>
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[]) {
+  <span class="keyword">if</span> (argc &gt; <span class="number">1</span>) {
+    loadRun(argv[<span class="number">1</span>]);
+  }
+  <span class="keyword">return</span> <span class="number">0</span>;
+}
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+}
+<span class="preprocessor">#endif</span>
+</code></pre><br>
+<br>
+А это модуль, отвечающий за загрузку динамических библиотек, который сам
+ вынесен в динамическую библиотеку для того, чтобы подгружаемые 
+библиотеки имели возможность использовать предоставляемые им функции:<br>
+<h6>loader.c</h6><br>
+<pre><code class="cpp"><span class="preprocessor">#include "loader.h"</span>
+<span class="preprocessor">#include "functions.h"</span>
+<span class="preprocessor">#include &lt;stdio.h&gt;</span>
+
+<span class="preprocessor">#ifndef WIN32</span>
+<span class="preprocessor">#include &lt;dlfcn.h&gt;</span>
+<span class="preprocessor">#else</span>
+<span class="preprocessor">#include &lt;windows.h&gt;</span>
+<span class="preprocessor">#endif</span>
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">void</span> printString(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="keyword">const</span> s) {
+  printf(<span class="string">"String from library: %s\n"</span>, s);
+}
+
+<span class="keyword">void</span> loadRun(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="keyword">const</span> s) {
+   <span class="keyword">void</span> * lib;
+   <span class="keyword">void</span> (*fun)(<span class="keyword">void</span>);
+<span class="preprocessor">#ifndef WIN32</span>
+   lib = dlopen(s, RTLD_LAZY);
+<span class="preprocessor">#else</span>
+   lib = LoadLibrary(s);
+<span class="preprocessor">#endif</span>
+   <span class="keyword">if</span> (!lib) {
+     printf(<span class="string">"cannot open library '%s'\n"</span>, s);
+     <span class="keyword">return</span>;
+   }
+<span class="preprocessor">#ifndef WIN32</span>
+   fun = (<span class="keyword">void</span> (*)(<span class="keyword">void</span>))dlsym(lib, <span class="string">"run"</span>);
+<span class="preprocessor">#else</span>
+   fun = (<span class="keyword">void</span> (*)(<span class="keyword">void</span>))GetProcAddress((HINSTANCE)lib, <span class="string">"run"</span>);
+<span class="preprocessor">#endif</span>
+   <span class="keyword">if</span> (fun == NULL) {
+     printf(<span class="string">"cannot load function run\n"</span>);
+   } <span class="keyword">else</span> {
+     fun();
+   }
+<span class="preprocessor">#ifndef WIN32</span>
+   dlclose(lib);
+<span class="preprocessor">#else</span>
+   FreeLibrary((HINSTANCE)lib);
+<span class="preprocessor">#endif</span>
+}
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+}
+<span class="preprocessor">#endif</span>
+</code></pre><br>
+<h5>Заголовочные файлы</h5><br>
+Это всё была реализация, а теперь заголовочные файлы.<br>
+Вот интерфейс модуля, загружающего динамические библиотеки, для основного модуля:<br>
+<h6>loader.h</h6><br>
+<pre><code class="cpp"><span class="preprocessor">#ifndef LOADER_H</span>
+<span class="preprocessor">#define LOADER_H</span>
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">extern</span> <span class="keyword">void</span> loadRun(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="keyword">const</span> s);
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+}
+<span class="preprocessor">#endif</span>
+
+<span class="preprocessor">#endif</span>
+</code></pre><br>
+<br>
+Вот интерфейс загрузчика для загружаемых им динамических библиотек 
+(перечень функций, которые динамические библиотеки могут использовать в 
+основной программе):<br>
+<h6>functions.h</h6><br>
+<pre><code class="cpp"><span class="preprocessor">#ifndef FUNCTIONS_H</span>
+<span class="preprocessor">#define FUNCTIONS_H</span>
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">extern</span> <span class="keyword">void</span> printString(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="keyword">const</span> s);
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+}
+<span class="preprocessor">#endif</span>
+
+<span class="preprocessor">#endif</span>
+</code></pre><br>
+Как видно, здесь всего одна функция printString для примера.<br>
+<br>
+<h5>Компиляция загрузчика</h5><br>
+Пример недистрибутивной компиляции (в случае Windows в опции компилятора просто нужно добавить -DWIN32):<br>
+<pre><code class="bash">$ gcc -Wall -c main.c
+$ gcc -Wall -fPIC -c loader.c
+$ gcc -shared -o libloader.so loader.o -ldl
+$ gcc main.o -ldl -o run -L. -lloader -Wl,-rpath,.
+</code></pre><br>
+Дистрибутивная компиляция от недистрибутивной отличается тем, что в 
+дистрибутивном случае динамические библиотеки ищутся в /usr/lib и имеют 
+вид lib$(NAME).so.$(VERSION), в случае недистрибутивной компиляции они 
+называются lib$(NAME).so, а ищутся в каталоге запуска программы.<br>
+<br>
+Теперь посмотрим, что у нас получилось после компиляции:<br>
+<pre><code class="bash">$ nm run | tail -n 2
+         U loadRun
+08048504 T main
+$ nm libloader.so| tail -n 4
+000005da T loadRun
+000005ac T printString
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+</code></pre><br>
+Тут видим, что функции, отмечаемые как U ищутся во внешних динамических 
+библиотеках, а функции, отмечаемые как T предоставляются модулем. Это 
+бинарный интерфейс программы (ABI).<br>
+<br>
+<h4>Динамические библиотеки</h4><br>
+Теперь приступим к описанию самих динамических библиотек.<br>
+<h5>Библиотека на языке C</h5><br>
+Вот пример простейшей библиотеки на языке C:<br>
+<h6>lib.c</h6><br>
+<pre><code class="cpp"><span class="preprocessor">#include "functions.h"</span>
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">void</span> run(<span class="keyword">void</span>) {
+  printString(<span class="string">"Hello, world!"</span>);
+}
+
+<span class="preprocessor">#ifdef __cplusplus</span>
+}
+<span class="preprocessor">#endif</span>
+</code></pre><br>
+Здесь везде окружение <strong>extern «C» {}</strong> нужно для того, 
+чтобы нашу программу можно было компилировать при помощи 
+C++-компилятора, такого, как g++. Просто в C++ можно объявлять функции с
+ одним и тем же именем, но с разной сигнатурой, соответственно в этом 
+случае используется так называемая <em>декорация</em> имён функций, то есть сигнатура функций записывается в ABI. Окружение <strong>extern «C» {}</strong> нужно для того, чтобы не использовалась эта декорация (тем более, что эта декорация зависит от используемого компилятора).<br>
+<br>
+<h6>Компиляция</h6><br>
+<pre><code class="bash">$ gcc -Wall -fPIC -c lib.c
+$ gcc -shared -o lib.so lib.o
+</code></pre><br>
+ABI:<br>
+<pre><code class="bash">$ nm lib.so | tail -n 2
+         U printString
+0000043c T run
+</code></pre><br>
+Запуск:<br>
+<pre><code class="bash">$ ./run lib.so
+String from library: Hello, world!
+</code></pre><br>
+Если мы уберём в нашем модуле окружение <strong>extern «C» {}</strong> и скомпилируем при помощи g++ вместо gcc, то увидим следующее:<br>
+<pre><code class="bash">$ nm lib.so | grep run
+0000045c T _Z3runv
+</code></pre><br>
+То есть, как и ожидалось, ABI библиотеки изменился, теперь наш загрузчик не сможет увидеть функцию run в этой библиотеке:<br>
+<pre><code class="bash">$ ./run lib.so
+cannot load function run
+</code></pre><br>
+<br>
+<h5>Библиотека на языке Pascal</h5><br>
+Как мы увидели выше, для того, чтобы наш загрузчик видел функции в 
+динамических библиотеках, созданных компилятором C++, пришлось дополнять
+ наш код вставками <strong>extern «C» {}</strong>, это притом, что 
+C/C++-компиляторы и языки родственные. Что уж говорить про компилятор 
+FreePascal совершенно другого языка — Pascal? Естественно, что и тут без
+ дополнительных телодвижений не обойтись.<br>
+<br>
+Для начала нам нужно научиться использовать экспортированные в C функции
+ для динамических библиотек. Вот пример аналогичного C/C++ заголовочного
+ файла на языке Pascal:<br>
+<h6>func.pas</h6><br>
+<pre><code class="pascal delphi"><span class="keyword">unit</span> func;
+
+<span class="keyword">interface</span>
+  <span class="function"><span class="keyword">procedure</span> <span class="title">printString</span><span class="params">(<span class="keyword">const</span> s:<span class="keyword">string</span>)</span>;</span> <span class="keyword">stdcall</span>; <span class="keyword">external</span> name <span class="string">'printString'</span>;
+<span class="keyword">implementation</span>
+<span class="keyword">end</span>.
+</code></pre><br>
+<br>
+Вот пример самого модуля на языке Pascal:<br>
+<h6>modul.pas</h6><br>
+<pre><code class="pascal delphi"><span class="keyword">library</span> modul;
+<span class="keyword">uses</span>
+  func;
+
+<span class="function"><span class="keyword">procedure</span> <span class="title">run</span>;</span> <span class="keyword">stdcall</span>;
+<span class="keyword">begin</span>
+  printString(<span class="string">'Hello from module!'</span>);
+<span class="keyword">end</span>;
+
+<span class="keyword">exports</span>
+  run;
+
+<span class="keyword">begin</span>
+<span class="keyword">end</span>.
+</code></pre><br>
+<h6>Компиляция</h6><br>
+<pre><code class="bash">$ fpc -Cg modul.pas          
+Компилятор Free Pascal версии 2.5.1 [2011/02/21] для i386
+Copyright (c) 1993-2010 by Florian Klaempfl
+Целевая ОС: Linux <span class="keyword">for</span> i386
+Компиляция modul.pas
+Компоновка libmodul.so
+/usr/bin/ld: warning: link.res contains output sections; did you forget -T?
+/usr/bin/ld: warning: creating a DT_TEXTREL <span class="keyword">in</span> a shared object.
+13 строк скомпилиpовано, 6.6 сек
+</code></pre><br>
+Смотрим ABI получившейся библиотеки:<br>
+<pre><code class="bash">$ nm libmodul.so 
+         U printString
+000050c0 T run
+</code></pre><br>
+Как видим, ничего лишнего, однако настораживает предупреждение ld во время компиляции. Находим в гугле <a href="http://www.linux.org.ru/forum/development/2104919/page0?filter=anonymous">возможную причину предупреждения</a>,
+ это связано с компиляцией без PIC (Position Independent Code — код не 
+привязан к физическому адресу), однако в man fpc находим, что наша опция
+ -Cg должна генерировать PIC-код, что само по себе странно, видимо fpc 
+не выполняет своих обещаний, либо я делаю что-то не так.<br>
+<br>
+Теперь попробуем убрать в нашем заголовочном файле кусок <strong>name 'printString'</strong> и посмотрим, что выдаст компилятор теперь:<br>
+<pre><code class="bash">$ nm libmodul.so 
+         U FUNC_PRINTSTRING<span class="variable">$SHORTSTRING</span>
+000050d0 T run
+</code></pre><br>
+Как видно, декорация в FreePascal совсем другого рода, чем в g++ и тоже присутствует.<br>
+При запуске с этим модулем получаем:<br>
+<pre><code class="bash">$ ./run libmodul.so 
+./run: symbol lookup error: ./libmodul.so: undefined symbol: FUNC_PRINTSTRING<span class="variable">$SHORTSTRING</span>
+</code></pre><br>
+А с правильным модулем получаем:<br>
+<pre><code class="bash">$ ./run libmodul.so 
+String from library: Hello from module!
+</code></pre><br>
+Вот и всё, своей задачи — использование динамических библиотек, 
+написанных на различных языках — мы достигли, и наш код работает как под
+ Linux, так и под Windows (у самого Mac'а нет, поэтому не смотрел, как 
+там с этим). Кроме того, загруженные библиотеки имеют возможность 
+использовать предоставляемые в основной программе функции для 
+взаимодействия с ней (то есть являются плагинами основной программы).<br>
+<br>
+Сам загрузчик может выполняться в отдельном процессе, чтобы эти плагины 
+не смогли сделать ничего лишнего с основной программой. Соответственно, 
+основная программа может быть написана на любом другом удобном языке 
+программирования (например, на Java или на том же C++).<br>
+<br>
+<h4>Литература</h4><br>
+<ul>
+<li><a href="http://www.dreamincode.net/code/snippet1020.htm">Загрузка DLL в C++</a>.</li>
+<li><a href="http://firststeps.ru/linux/general1.html">Linux первые шаги</a>.</li>
+<li><a href="http://wiki.lazarus.freepascal.org/FPC_and_Apache_Modules#How_the_bindings_were_created">Создание модуля Apache на языке Pascal</a>.</li>
+</ul>
+			<div class="clear"></div>
+    </div>
+
+    
+<ul class="tags">
+	<li><a href="http://habrahabr.ru/search/?q=%5Bgcc%5D&amp;target_type=posts" rel="tag">gcc</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bfpc%5D&amp;target_type=posts" rel="tag">fpc</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bdll%5D&amp;target_type=posts" rel="tag">dll</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bso%5D&amp;target_type=posts" rel="tag">so</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Blinux%5D&amp;target_type=posts" rel="tag">linux</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bwindows%5D&amp;target_type=posts" rel="tag">windows</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bfree%20pascal%5D&amp;target_type=posts" rel="tag">free pascal</a></li>
+</ul>
+
+		<div class="infopanel_wrapper">
+	<div class="infopanel " id="infopanel_post_122757">
+	
+				<div class="voting   ">
+	
+						<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+	
+					<div class="mark positive ">
+							<span class="score" title="Всего 41: ↑35 и ↓6">+29</span>
+					</div>
+					
+						<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+		
+				</div>
+	
+		<div class="pageviews" title="Просмотры поста">6808</div>
+			
+		<div class="favorite">
+				<a class="guest" href="#" onclick="return false;" title="Только зарегистрированные пользователи могут добавлять посты в избранное"></a>
+		</div>
+		<div class="favs_count" title="Количество пользователей, добавивших пост в избранное">47</div>
+		
+		
+		
+	
+	
+	
+	
+				<div class="author">
+					<a title="Автор текста" href="http://habrahabr.ru/users/BeCase/">BeCase</a>
+					<span class="rating" title="рейтинг пользователя">1,0</span>
+				</div>
+		
+	
+	
+		
+			<div class="share">
+				<div class="twitter">
+					<a href="http://twitter.com/intent/tweet?text=%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5+%D0%B8+%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85+%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%2C+%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85+%D0%BD%D0%B0+%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85+%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85+%28C%2FC%2B%2B%2C+Pascal%29+http://habr.ru/p/122757/+via+%40habrahabr+%23habr" title="Опубликовать ссылку в Twitter" target="_blank"></a>
+				</div>
+				<div class="vkontakte">
+					<a href="http://vk.com/share.php?url=http://habrahabr.ru/post/122757/" title="Опубликовать ссылку во ВКонтакте" onclick="window.open(this.href, 'Опубликовать ссылку во Вконтакте', 'width=800,height=300'); return false"></a>
+				</div>
+				<div class="facebook">
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http://habrahabr.ru/post/122757/" title="Опубликовать ссылку в Facebook" onclick="window.open(this.href, 'Опубликовать ссылку в Facebook', 'width=640,height=436,toolbar=0,status=0'); return false"></a>
+				</div>
+				<div class="googleplus">
+					<a href="https://plus.google.com/share?url=http://habrahabr.ru/post/122757/" title="Опубликовать ссылку в Google Plus" onclick="window.open(this.href, 'Опубликовать ссылку в Google Plus', 'width=800,height=300'); return false"></a>
+				</div>
+			</div>
+	
+	</div>
+	<div class="clear"></div>
+</div>
+
+
+
+
+    
+		
+	</div>
+
+
+
+	
+<style type="text/css">
+	.post_inner_banner.adidas_inner_banner {overflow:hidden;text-decoration:none;text-align:left;height:70px;border:1px solid #d4d4d4;border-radius:15px;background: url(/images/posts/inner_post_banner/adidas/img.png) no-repeat 0px 0px;}
+	.post_inner_banner.adidas_inner_banner a{display:block;}
+	.post_inner_banner.adidas_inner_banner .adidas-text{font-size: 15px;font-weight:bold;text-transform: uppercase;float:left;margin-top:16px;color: #000000;line-height: 19px;padding-right:30px;margin-right:20px;background: url(/images/posts/inner_post_banner/adidas/arrow.png) no-repeat right center;}
+	.post_inner_banner.adidas_inner_banner .adidas-text1{margin-left:200px;}	
+	.post_inner_banner.adidas_inner_banner .adidas-text2{}	
+	.post_inner_banner.adidas_inner_banner .adidas-btn{width:164px;height:40px;margin-top:15px;display:block;float:left;background: url(/images/posts/inner_post_banner/adidas/btn.png) no-repeat 0px 0px;}
+	
+	@media (max-width: 1300px) { 
+    .post_inner_banner.adidas_inner_banner .adidas-text{font-size:13px;}
+	}
+	@media (max-width: 1200px) { 
+    .post_inner_banner.adidas_inner_banner .adidas-text1{display: none;}
+    .post_inner_banner.adidas_inner_banner .adidas-text2{margin-left:200px;font-size:15px;padding-right: 50px;margin-right:30px;}
+	}
+	@media (max-width: 1100px) { 
+    .post_inner_banner.adidas_inner_banner .adidas-text1{color:green;}
+    .post_inner_banner.adidas_inner_banner .adidas-text2{margin-left:200px;font-size:13px;padding-right: 28px;margin-right:18px;}    
+	}
+</style>
+<div class="adidas_inner_banner post_inner_banner hidden">
+  <a href="#url" class="block_url">
+  <div class="adidas-text adidas-text1">Свежий взгляд<br>на бег</div>
+  <div class="adidas-text adidas-text2">протестируй кроссовки<br>нового поколения</div>
+  <div class="adidas-btn"></div>
+  </a>
+</div>
+
+<style type="text/css">
+    .post_inner_banner.wserver_inner_banner {overflow:hidden;text-decoration:none;text-align:left;height:69px;border:1px solid #d4d4d4;border-radius:15px;background: url(/images/posts/inner_post_banner/wserver/left.png) no-repeat -15px 0px;}
+    .post_inner_banner.wserver_inner_banner a {display:block;}
+    .post_inner_banner.wserver_inner_banner .wserver-text {font-family:'PT Sans', sans-serif;font-size:18px;float:left;color: #000000;line-height: 19px;}
+    .post_inner_banner.wserver_inner_banner .wserver-text1 {margin-left:155px;margin-top:16px;padding-right:20px;}
+    .post_inner_banner.wserver_inner_banner .wserver-text2 {background: url(/images/posts/inner_post_banner/wserver/man.png) no-repeat left center;padding-left:95px;height:53px;padding-top:16px;}
+    .post_inner_banner.wserver_inner_banner .wserver-btn{width:164px;height:40px;margin-top:15px;margin-left:15px;display:block;float:left;background: url(/images/posts/inner_post_banner/wserver/button.png) no-repeat 0px 0px;font-family:'PT Sans Caption', sans-serif;font-weight:bold;color:#fff;font-size:21px;line-height:40px;text-align:center;}
+
+    @media (max-width: 1300px) {
+        .post_inner_banner.wserver_inner_banner .wserver-text{font-size:15px;}
+    }
+
+    @media (max-width: 1200px) {
+        .post_inner_banner.wserver_inner_banner .wserver-text{font-size:13px;}
+        .post_inner_banner.wserver_inner_banner .wserver-btn {margin-left:10px;}
+        .post_inner_banner.wserver_inner_banner .wserver-text2 {padding-left:80px;}
+        .post_inner_banner.wserver_inner_banner .wserver-text1 {padding-right:0;}
+    }
+
+    @media (max-width: 1100px) {
+        .post_inner_banner.wserver_inner_banner .wserver-text1 {display:none;}
+        .post_inner_banner.wserver_inner_banner .wserver-text2{margin-left:155px;background-position:right center;padding-left:0;padding-right:85px;}
+    }
+</style>
+<div class="wserver_inner_banner post_inner_banner hidden">
+    <a href="#url" class="block_url">
+        <div class="wserver-text wserver-text1">Стань<br>первоиспытателем!</div>
+        <div class="wserver-text wserver-text2">Скачай Windows Server 2012 R2<br>и <b>выиграй почетную футболку!</b></div>
+        <div class="wserver-btn">Скачать</div>
+    </a>
+</div>
+
+<style type="text/css">
+    .post_inner_banner.nokia_lumia1520_inner_banner {overflow:hidden;text-align:center;height:69px;border:1px solid #d4d4d4;border-radius:15px;background: url(/images/posts/inner_post_banner/nokia/lumia1520_phone.png) no-repeat right;}
+    .post_inner_banner.nokia_lumia1520_inner_banner a {text-decoration:none;color:#000;}
+    .post_inner_banner.nokia_lumia1520_inner_banner div {display:block;float:left;text-align:left;}
+    .post_inner_banner.nokia_lumia1520_inner_banner .nokia_icons {background: url(/images/posts/inner_post_banner/nokia/lumia1520_icons.png) no-repeat;width:120px;height:34px;margin-left:29px;margin-top:18px;}
+    .post_inner_banner.nokia_lumia1520_inner_banner .pedia {margin:16px 30px 0 29px;font-size:15px;line-height:18px;}
+    .post_inner_banner.nokia_lumia1520_inner_banner .pedia a {color:#70a4bd;}
+    .post_inner_banner.nokia_lumia1520_inner_banner .pedia_button {display:block;float:left;margin-top:14px;background: url(/images/posts/inner_post_banner/nokia/lumia1520_button.png) no-repeat;width:229px;height:40px;}
+
+    @media (max-width: 1300px) {
+        .post_inner_banner.nokia_lumia1520_inner_banner {background-position:right -20px top; }
+
+        .post_inner_banner.nokia_lumia1520_inner_banner .pedia {margin:18px 15px 0 15px;}
+        .post_inner_banner.nokia_lumia1520_inner_banner .nokia_icons {margin-left:15px;}
+    }
+    @media (max-width: 1200px) {
+        .post_inner_banner.nokia_lumia1520_inner_banner .nokia_icons {display:none;}
+        .post_inner_banner.nokia_lumia1520_inner_banner {background-position:right -30px top; }
+    }
+    @media (max-width: 1100px) {
+        .post_inner_banner.nokia_lumia1520_inner_banner {background-position:right -90px top; }
+        .post_inner_banner.nokia_lumia1520_inner_banner .pedia {margin-right:30px;}
+    }
+</style>
+<div class="nokia_lumia1520_inner_banner post_inner_banner hidden">
+    <div class="nokia_icons"></div>
+    <div class="pedia"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&amp;ad=445870&amp;bt=21&amp;pid=1533340&amp;bid=3132651&amp;bn=3132651&amp;rnd=951495518" target="_blank">Энциклопедия Nokia<br> Lumia</a> на Хабрахабре</div>
+    <a class="pedia_button block_url" href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&amp;ad=445870&amp;bt=21&amp;pid=1533340&amp;bid=3132651&amp;bn=3132651&amp;rnd=951495518" target="_blank"></a>
+</div>
+<style type="text/css">
+    .post_inner_banner.seopult_inner_banner { overflow:hidden;text-align:center;height:70px;border:1px solid #d4d4d4;border-radius:15px; }
+    .post_inner_banner.seopult_inner_banner a { text-decoration:none;color:#000;overflow:hidden;display:block;height:70px;width:1500px; }
+    .post_inner_banner.seopult_inner_banner div { display:block;float:left;text-align:left;font-size:12px; }
+    .post_inner_banner.seopult_inner_banner .logo { background: url(/images/posts/inner_post_banner/seopult/logo.png) no-repeat center;width:153px;height:70px; }
+    .post_inner_banner.seopult_inner_banner .zig { background: url(/images/posts/inner_post_banner/seopult/zig.png) no-repeat center;width:7px;height:70px; }
+    .post_inner_banner.seopult_inner_banner .target { background: url(/images/posts/inner_post_banner/seopult/target.png) no-repeat 0 5px;width:200px;padding-left:55px;padding-top:12px;height:53px;font:18px/22px Verdana, Arial;color:#000;margin:0 20px; }
+    .post_inner_banner.seopult_inner_banner .list ul { margin:10px 20px; }
+    .post_inner_banner.seopult_inner_banner .list ul li { background: url(/images/posts/inner_post_banner/seopult/li.png) no-repeat 0 2px;padding-left:15px;font:12px/16px Verdana, Arial;color:#000; }
+    .post_inner_banner.seopult_inner_banner .mline { background: url(/images/posts/inner_post_banner/seopult/right.png) no-repeat;width:6px;height:70px; }
+    .post_inner_banner.seopult_inner_banner .mmore { background:#ea9d4a;text-align:center;height:70px;width:172px;font:18px/70px Verdana, Arial;color:#fff; }
+    .post_inner_banner.seopult_inner_banner .mmore span { border-bottom:1px solid #fff; }
+
+
+    @media (max-width: 1300px) {
+        .post_inner_banner.seopult_inner_banner .mmore { width:102px;font-size:14px; }
+    }
+    @media (max-width: 1200px) {
+        .post_inner_banner.seopult_inner_banner .mline,
+        .post_inner_banner.seopult_inner_banner .mmore { display:none; }
+    }
+    @media (max-width: 1100px) {
+        .post_inner_banner.seopult_inner_banner .logo { width:140px; }
+        .post_inner_banner.seopult_inner_banner .target { width:152px;font-size:14px;padding-left:50px;margin:0 10px; }
+    }
+</style>
+<div class="seopult_inner_banner post_inner_banner hidden">
+    <a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&amp;ad=451110&amp;bt=21&amp;bid=3186459&amp;bn=3186459&amp;rnd=140312559" target="_blank" class="block_url">
+        <div class="logo"></div>
+        <div class="zig"></div>
+        <div class="target">Автоматизированное<br>продвижение сайтов</div>
+        <div class="zig"></div>
+        <div class="list">
+            <ul>
+                <li>50% экономии на ссылках</li><li>Запуск проекта за 10 минут</li><li>Вывод и удержание в ТОП 10</li>
+            </ul>
+        </div>
+        <div class="mline"></div>
+        <div class="mmore"><span>Подробнее</span></div>
+    </a>
+</div>
+<style type="text/css">
+    .post_inner_banner.megafon_inner_banner { overflow:hidden;text-align:center;height:70px;border:1px solid #d4d4d4;border-radius:15px;background: url(/images/posts/inner_post_banner/megafon/login_green.png) no-repeat left top; }
+    .post_inner_banner.megafon_inner_banner a { text-decoration:none;color:#000;}
+    .post_inner_banner.megafon_inner_banner a > div { display:block;float:left;text-align:left; }
+    .post_inner_banner.megafon_inner_banner .slogan { margin-left:30px;font-size:18px;color:#fff;margin-top:12px; }
+    .post_inner_banner.megafon_inner_banner .slogan b { display:block; }
+    .post_inner_banner.megafon_inner_banner .planshet { background: url(/images/posts/inner_post_banner/megafon/login_planshet.png) no-repeat center;width:235px;height:70px;margin:0 20px 0 40px; }
+    .post_inner_banner.megafon_inner_banner .price { font:11px/14px Verdana, Arial;color:#aaaaaa;margin-top:12px; }
+    .post_inner_banner.megafon_inner_banner .price .sum { font:30px/32px Verdana, Arial;color:#472671;font-weight:bold; }
+    .post_inner_banner.megafon_inner_banner .price .zvezda { font-size:18px;position:relative;bottom:0.6em; }
+    .post_inner_banner.megafon_inner_banner .price .link { text-decoration:underline; }
+    .post_inner_banner.megafon_inner_banner .button { background: url(/images/posts/inner_post_banner/megafon/login_button.png) no-repeat;width:125px;height:38px;font:14px/38px Verdana, Arial;color:#fff;margin:17px 0 0 20px;text-align:center; }
+
+    @media (max-width: 1300px) {
+        .post_inner_banner.megafon_inner_banner { background-position:-50px 0; }
+        .post_inner_banner.megafon_inner_banner .slogan { background-position:20px 0;font-size:14px;margin:17px 0 0 17px; }
+        .post_inner_banner.megafon_inner_banner .planshet { margin:0 10px 0 20px; }
+    }
+    @media (max-width: 1200px) {
+        .post_inner_banner.megafon_inner_banner .planshet { margin-left:40px; }
+        .post_inner_banner.megafon_inner_banner .price { margin-left:15px; }
+        .post_inner_banner.megafon_inner_banner .button { display:none; }
+    }
+    @media (max-width: 1100px) {
+        .post_inner_banner.megafon_inner_banner .planshet { margin-left:10px; }
+        .post_inner_banner.megafon_inner_banner .price { margin-left:0;font-size:10px; }
+        .post_inner_banner.megafon_inner_banner .button { margin-left:20px; }
+
+    }
+</style>
+<div class="megafon_inner_banner post_inner_banner hidden">
+    <script type="text/javascript">
+        (new Image()).src = 'http://ar.tns-counter.ru/V13a****ar_ru/ru/CP1251/tmsec=77790_450366-1552541/!' + Math.round(Math.random()*1E9);
+    </script>
+
+    <a href="" target="_blank" class="block_url">
+        <div class="slogan">
+            Новый 3G-планшет
+            <b>Login 2</b>
+        </div>
+        <div class="planshet"></div>
+        <div class="price">
+            <div><span class="sum">2790 р.</span><span class="zvezda"><sup>*</sup></span></div>
+            <sup>*</sup>Условия акции на <span class="link">www.megafon.ru</span>
+        </div>
+        <div class="button">Подробнее</div>
+    </a>
+</div>
+<style type="text/css">
+    .post_inner_banner.lobapps_inner_banner { overflow:hidden;text-align:center;height:70px;border:1px solid #d4d4d4;border-radius:15px; }
+    .post_inner_banner.lobapps_inner_banner a { text-decoration:none;color:#000;}
+    .post_inner_banner.lobapps_inner_banner a > div { display:block;float:left;text-align:left; }
+    .post_inner_banner.lobapps_inner_banner .slogan { height:70px;padding:13px 0 0 100px;background:#21adf0 url(/images/posts/inner_post_banner/microsoft/lobapps/left.png) no-repeat left top;font-size:18px;color:#fff;}
+    .post_inner_banner.lobapps_inner_banner .slogan b { display:block; }
+    .post_inner_banner.lobapps_inner_banner .snake { background: url(/images/posts/inner_post_banner/microsoft/lobapps/snake.png) no-repeat right;width:42px;height:70px; }
+    .post_inner_banner.lobapps_inner_banner .cent { background: url(/images/posts/inner_post_banner/microsoft/lobapps/cent.png) no-repeat center center;width:170px;height:70px;margin:0 30px; }
+    .post_inner_banner.lobapps_inner_banner .button { width:240px;height:40px;border:5px solid #21adf0;border-radius:5px;font:20px/40px Verdana, Arial;color:#000;margin:10px 0 0 0;text-align:center; }
+
+    @media (max-width: 1300px) {
+        .post_inner_banner.lobapps_inner_banner .button { font-size:14px;width:auto;padding: 0 10px; }
+    }
+    @media (max-width: 1200px) {
+        .post_inner_banner.lobapps_inner_banner .slogan { font-size:14px;padding-top:18px; }
+        .post_inner_banner.lobapps_inner_banner .cent { margin:0 18px; }
+        .post_inner_banner.lobapps_inner_banner .snake { width:22px; }
+    }
+    @media (max-width: 1100px) {
+        .post_inner_banner.lobapps_inner_banner .cent { display:none; }
+        .post_inner_banner.lobapps_inner_banner .button { margin-left:30px;width:220px;font-size:18px; }
+    }
+</style>
+<div class="lobapps_inner_banner post_inner_banner hidden">
+    <!--<script type="text/javascript">
+        (new Image()).src = 'http://ar.tns-counter.ru/V13a****ar_ru/ru/CP1251/tmsec=77790_450366-1552541/!' + Math.round(Math.random()*1E9);
+    </script>-->
+
+    <a href="" target="_blank" class="block_url">
+        <div class="slogan">
+            Разрабатываешь<br>приложения для бизнеса?
+        </div>
+        <div class="snake"></div>
+        <div class="cent"></div>
+        <div class="button">Участвуй в конкурсе</div>
+    </a>
+</div>
+
+<script type="text/javascript">
+function show_inner_banner_block(name, url) {
+	if( typeof(name) !== 'undefined') {
+		if( $('.'+name+'_inner_banner').size() > 0) {
+			$('.'+name+'_inner_banner').show();
+		}
+	}
+
+	if( typeof(url) !== 'undefined') {
+		$('.'+name+'_inner_banner .block_url').attr('href', url);
+	}
+}
+</script>
+
+<div id="adriver_banner_1586921565"></div>
+<script type="text/javascript">
+	//if (true)
+	//	show_inner_banner_block('lobapps');
+    //else
+		new adriver("adriver_banner_1586921565", {sid:179440, bt:52, bn:3});
+</script>
+
+
+	
+		<div class="comments_list " id="comments">
+
+  <h2 class="title ">комментарии (<span id="comments_count">9</span>)
+  
+  </h2>
+
+    <div class="comment_item" id="comment_4021530">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4021530">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4021530" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 2: ↑1 и ↓1">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/andrewsh/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/andrewsh/" class="username">andrewsh</a><span class="comma">,</span>
+            <time>27 июня 2011 в 13:48</time>
+
+            <a href="#comment_4021530" class="link_to_comment">#</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Показательно, насколько меньше писанины на Паскале :)
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4021530">
+        <div class="comment_item" id="comment_4021731">
+
+    <span class="parent_id" data-parent_id="4021530"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4021731">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4021731" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 2: ↑2 и ↓0">+2</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/torkve/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/4ae3fadebb97fd56e199b3cfad5d9a83_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/torkve/" class="username">torkve</a><span class="comma">,</span>
+            <time>27 июня 2011 в 14:35</time>
+
+            <a href="#comment_4021731" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4021731" data-parent_id="4021530" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4021530" data-id="4021731" data-parent_id="4021530" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Меньше? Модуль на паскале — 15 строк кода, считая 
+заголовочный файл. Модуль на си — 10 строк, включая ненужные проверки 
+типа #ifdef __cplusplus (если мы точно собираем сишным компилятором, 
+этот дефайн не будет выставлен и экстерн нам не нужен тоже).
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4021731">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    <div class="comment_item" id="comment_4021859">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4021859">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4021859" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/akzhan/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/479a6e98d816f8644ff18513cc26a60e_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/akzhan/" class="username">akzhan</a><span class="comma">,</span>
+            <time>27 июня 2011 в 15:10</time>
+
+            <a href="#comment_4021859" class="link_to_comment">#</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Если речь идет о загрузке в отдельном процессе, нет смысла в DLL/SO.<br>
+<br>
+Тогда правильнее запускать процессы и использовать любой вариант IPC.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4021859">
+        <div class="comment_item" id="comment_4021984">
+
+    <span class="parent_id" data-parent_id="4021859"></span>
+    <div class="comment_body">
+        <div class="info  is_topic_starter  " rel="4021984">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4021984" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/BeCase/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/BeCase/" class="username">BeCase</a><span class="comma">,</span>
+            <time>27 июня 2011 в 15:45</time>
+
+            <a href="#comment_4021984" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4021984" data-parent_id="4021859" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4021859" data-id="4021984" data-parent_id="4021859" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Для того, чтобы студенты смогли использовать IPC сами, им 
+необходимы какие-то дополнительные телодвижения (изучение протокола 
+передачи данных, например). Это также приведёт к дублированию 
+функционала, отвечающего за IPC в различных реализациях, сложности 
+синхронизации исправленных ошибок…<br>
+В оригинале IPC используется между загрузчиком библиотек и 
+Java-программой (соответственно, загрузчик — это отдельный процесс), а 
+первый плагин пишется также просто, как этот «Hello, world».
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4021984">
+        <div class="comment_item" id="comment_4022049">
+
+    <span class="parent_id" data-parent_id="4021984"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4022049">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4022049" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/akzhan/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/479a6e98d816f8644ff18513cc26a60e_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/akzhan/" class="username">akzhan</a><span class="comma">,</span>
+            <time>27 июня 2011 в 16:00</time>
+
+            <a href="#comment_4022049" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4022049" data-parent_id="4021984" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4021984" data-id="4022049" data-parent_id="4021984" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            В любом случае что-то изучать придется.<br>
+<br>
+В вашем случае надо изучить mangling etc.<br>
+<br>
+В случае IPC, — изучить API любой библиотеки IPC.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4022049">
+        <div class="comment_item" id="comment_4022567">
+
+    <span class="parent_id" data-parent_id="4022049"></span>
+    <div class="comment_body">
+        <div class="info  is_topic_starter  " rel="4022567">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4022567" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/BeCase/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/BeCase/" class="username">BeCase</a><span class="comma">,</span>
+            <time>27 июня 2011 в 19:34</time>
+
+            <a href="#comment_4022567" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4022567" data-parent_id="4022049" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4022049" data-id="4022567" data-parent_id="4022049" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            А вы можете привести пример библиотеки IPC, доступной хотя 
+бы для двух платформ — Linux и Windows и на 2-х языках: Pascal, C/C++?
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4022567">
+        <div class="comment_item" id="comment_4022580">
+
+    <span class="parent_id" data-parent_id="4022567"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4022580">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4022580" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/akzhan/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/479a6e98d816f8644ff18513cc26a60e_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/akzhan/" class="username">akzhan</a><span class="comma">,</span>
+            <time>27 июня 2011 в 19:36</time>
+
+            <a href="#comment_4022580" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4022580" data-parent_id="4022567" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4022567" data-id="4022580" data-parent_id="4022567" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            <a href="http://www.zeromq.org/">0MQ</a>
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4022580">
+        <div class="comment_item" id="comment_4022590">
+
+    <span class="parent_id" data-parent_id="4022580"></span>
+    <div class="comment_body">
+        <div class="info  " rel="4022590">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4022590" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/akzhan/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/479a6e98d816f8644ff18513cc26a60e_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/akzhan/" class="username">akzhan</a><span class="comma">,</span>
+            <time>27 июня 2011 в 19:40</time>
+
+            <a href="#comment_4022590" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4022590" data-parent_id="4022580" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4022580" data-id="4022590" data-parent_id="4022580" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            На странице привязок Object Pascal отсутствует, но его можно найти тут: <a href="http://delphimax.wordpress.com/2010/09/03/%C3%B8mq-for-delphi/">delphimax.wordpress.com/2010/09/03/%C3%B8mq-for-delphi/</a><br>
+<br>
+У нас использовались уже привязки к Objective C и к Ruby, нареканий нет.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4022590">
+        <div class="comment_item" id="comment_4023756">
+
+    <span class="parent_id" data-parent_id="4022590"></span>
+    <div class="comment_body">
+        <div class="info  is_topic_starter  " rel="4023756">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_4023756" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/BeCase/" class="avatar"><img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/BeCase/" class="username">BeCase</a><span class="comma">,</span>
+            <time>28 июня 2011 в 09:38</time>
+
+            <a href="#comment_4023756" class="link_to_comment">#</a>
+            <div class="show_tree" data-id="4023756" data-parent_id="4022590" title="Показать ветку комментариев">↵</div>
+
+            <a href="#comment_4022590" data-id="4023756" data-parent_id="4022590" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Благодарю за наводку, будет альтернативой :).
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_4023756">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+</div>
+
+					<p class="for_users_only_msg">Только зарегистрированные пользователи могут оставлять комментарии. <a href="https://auth.habrahabr.ru/login/">Войдите</a>, пожалуйста.</p>
+
+
+	
+<form action="/json/favorites/" method="post" id="edit_tags_form" class="hidden">
+  <input name="action" value="add" type="hidden">
+  <input name="ti" value="0" type="hidden">
+  <input name="tt" value="0" type="hidden">
+  <label>Пометьте топик понятными вам метками, если хотите</label>
+  <input autocomplete="off" name="tags_string" class="tags_string" type="text">
+  <div class="description">Метки лучше разделять запятой. Например: <i>общение, социальные сети, myspace.com, подростки, мердок</i></div>
+  <input value="Сохранить" class="submit" type="submit"> или <a href="#" class="close" onclick="return close_edit_tags()">закрыть</a>
+</form>
+    
+
+
+  </div>
+  <div class="sidebar_right">
+		
+	
+	
+		<div class="banner_300x500">
+		<div id="adriver_banner_1863387959"></div>
+		<script type="text/javascript">
+			(function(){
+				var custom = {};
+					custom[1] = 'programming';
+				
+				var std = {},i;for(i in
+				std){try{custom[std[i]]=eval(i)}catch(e){} }
+				new adriver("adriver_banner_1863387959", {sid: 176776, bt: 52, bn: 1, custom:
+				custom});
+			}());
+		</script>
+		</div>
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+<div style="width: auto; opacity: 1;" class="block daily_best_posts">
+  <div class="title">Лучшее <sup>за 24 часа</sup></div>
+  <div class="posts_list">
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214541/" class="post_name">На работу этих «вечных» часов можно смотреть бесконечно</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214335/" class="post_name">Искушение воздушного старта</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214533/" class="post_name">Gravity: реальный фотосет от NASA, в стиле одноименного фильма</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214377/" class="post_name">Железо на службе у алгоритма (продолжение)</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214379/" class="post_name">Как работают сигналы и слоты в Qt</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214487/" class="post_name">Что внутри олимпийской медали болельщика 2014?</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214475/" class="post_name">Отечественная телеигровая приставка «Астра» — привет из 90-х</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/contactless/blog/214381/" class="post_name">Демонстрация работы Wiren Board Smart Home</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/kolibrios/blog/213557/" class="post_name">Shell – консольный Just for fun</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/214347/" class="post_name">Скрипт Automator, загружающий изображения на Habrastorage: второе пришествие</a>
+      </div>
+  </div>
+  <div class="all"><a href="http://habrahabr.ru/top/">все лучшие</a></div>
+</div>
+
+		
+		
+
+
+<div class="block similar_posts">
+
+	<div class="title">Похожие посты</div>
+  <div class="posts_list">
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/213995/">Linux-vserver или каждому сервису по песочнице</a>
+    				<span class="when">26.02.2014</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/213973/">Исследуем Linux Botnet «BillGates»</a>
+    				<span class="when">26.02.2014</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/213363/">Windows RT. Личный опыт</a>
+    				<span class="when">20.02.2014</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/213223/">Почему не ставится Windows на MacBook Air 2013 через BootCamp?</a>
+    				<span class="when">20.02.2014</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/177313/">Настраиваем
+ 2X ApplicationServer XG и публикуем Windows приложения для Android, 
+iOS, Linux, Windows, Mac и браузеров с поддержкой HTML5</a>
+    				<span class="when">19.04.2013</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/139061/">Linux показал рост 64% за год</a>
+    				<span class="when">28.02.2012</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/132921/">Desura: платформа дистрибуции игр под Linux/Windows</a>
+    				<span class="when">18.11.2011</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/71366/">Анатомия Linux тролля с благими намерениями</a>
+    				<span class="when">03.10.2009</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/28838/">Linux — для домохозяек, XP — для гиков</a>
+    				<span class="when">10.07.2008</span>
+      </div>
+    	<div class="post_item">
+    				<a class="post_name" href="http://habrahabr.ru/post/18595/">Linux в организации…</a>
+    				<span class="when">11.01.2008</span>
+      </div>
+  </div>			
+</div>
+
+
+
+	    
+<div class="block similar_questions">
+	<div class="title">Вопросы по теме</div>
+
+	<div class="posts_list">
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/70014">Линукс с нуля: как прикрепить программы к чистому ядру?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/69172">Кросс компиляция Raspberry pi</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/60694">Разработка на C/С++ под Linux: как правильно подобрать компилятор и IDE?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/54972">Как настроить компиляцию C в Sublime text под линуксом?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/53130">Кросс-компиляция под Tplink WR703N</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/32859">Удаленный рабочий стол из Linux и драйвер DLL — как возможно?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/24883">Ошибка ./configure</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/24881">Ошибка ./configure</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/24879">Ошибка ./configure</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/22855">DEB пакеты gcc_4.7.1 или clang_3.1?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/19185">В чем причина странного поведения при попытке записать в std::cerr, код выкидывает std::bad_cast?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/15020">Увеличение размера библиотеки при компиляции всех исходников одним файлом</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/8373">Соберите пожалуйста утилитку для Linux</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/6071">Linux, OpenMP и GCC: многопоточная программа в 5-6 раз медленнее однопоточной</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/4542">Возможно ли сделать объектно-ориентированное API через DLL (GCC, C++)?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/75784">Какой консольный редактор JS/HTML-кода порекомендуете?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/75664">Можно ли подключиться по RDP с Terminal Server Gateway из linux?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/75634">Почему разрывается соединение МТС GPRS в Ubuntu?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/75496">Как произвести запуск команды по звуку в linux?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" href="https://toster.ru/q/75430">Что выбрать для l2tp beeline: linux+xl2tpd или pfsense?</a>
+		</div>
+  </div>			
+		
+</div>
+
+		
+		
+
+	<div class="block live_broadcast">
+		<div class="title">Что обсуждают? </div>
+
+		<div class="live_broadcast_activity">
+				<div class="posts_list">
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214533/#comment_7372179" class="post_name">Gravity: реальный фотосет от NASA, в стиле одноименного фильма</a>&nbsp;<span class="count">50</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214541/#comment_7372177" class="post_name">На работу этих «вечных» часов можно смотреть бесконечно</a>&nbsp;<span class="count">40</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214443/#comment_7372175" class="post_name">Фотооэкскурсия в ЦОД «DataPro Тверь», Часть 1</a>&nbsp;<span class="count">15</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214321/#comment_7372173" class="post_name">11 носимых устройств, представленных на #MWC2014</a>&nbsp;<span class="count">26</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/166207/#comment_7372167" class="post_name">Единый центр общения — Imo.im</a>&nbsp;<span class="count">70</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214543/#comment_7372165" class="post_name">Как подружить MS Office и LibreOffice</a>&nbsp;<span class="count">19</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214263/#comment_7372163" class="post_name">Отправляем заявление в Государственную Думу относительно "«анти»террористического" пакета законопроектов</a>&nbsp;<span class="count">166</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214249/#comment_7372161" class="post_name">Законопроект об ограничении интернет-платежей принят в первом чтении</a>&nbsp;<span class="count">205</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214289/#comment_7372157" class="post_name">О SAN (Storage Area Network) на пальцах</a>&nbsp;<span class="count">36</span>
+							</div>
+							<div class="post_item">
+								
+								<a href="http://habrahabr.ru/post/214353/#comment_7372151" class="post_name">Mediatek анонсировал 64-битный чип с поддержкой LTE</a>&nbsp;<span class="count">7</span>
+							</div>
+				</div>
+				<div class="all"><a href="http://habrahabr.ru/posts/">все посты</a></div>
+		</div>
+
+	</div>
+  
+		
+
+
+
+
+
+
+	<!--  AdRiver code START. Type:AjaxJS Site: habrahabr PZ: 0 BN: 2 -->
+	<div id="adriver_banner_480931290" class="adbanner"></div>
+
+	<script type="text/javascript">
+		new adriver("adriver_banner_480931290", {sid:176776, bt:52, bn:2});
+	</script>
+	<!--  AdRiver code END  -->
+
+
+	
+
+		
+<div class="block best_company">
+
+		<div class="title">Компания дня <img src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/bg_cicle_help.png" class="help-tip"></div>
+
+		<div class="company_info">
+			<div class="name">
+			 <img class="favicon" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/0831bd64efd3de3a35ce0d05f6ca5e9f_small.png" alt="PVS-Studio" height="16" width="16">
+			 <div class="company_name"><a href="http://habrahabr.ru/company/pvs-studio/" class="title">PVS-Studio</a></div>
+			</div>
+
+			<p>Последний пост:
+				<a href="http://habrahabr.ru/company/pvs-studio/blog/214161/">Сколько стоит одна ошибка в наших программах, или какие ошибки бывают в PVS-Studio и CppCat</a>
+			</p>
+
+			<div class="buttons">
+  			<div id="fans_count">415 подписчиков</div>
+			</div>
+		</div>
+
+	</div>
+
+
+		
+
+		
+	<div class="block new_vacanies">
+  <a href="http://hantim.ru/" class="title">Хантим</a>
+  <div class="vacancies">
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/31406-js-razrabotchik-v-pics-io">JS разработчик в Pics.io</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/30792-verstalschik-html-front-end-razrabotchik">Верстальщик HTML/Front-end разработчик</a>&nbsp;→ <a href="http://robotics.hantim.ru/jobs" class="company_name">Robotics</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/15440-veb-razrabotchik-php-symfony2">Веб разработчик (PHP, Symfony2) </a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/21628-javascript-razrabotchik">JavaScript разработчик</a>&nbsp;→ <a href="http://competentum.hantim.ru/jobs" class="company_name">Competentum</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/31402-javascript-razrabotchik">JavaScript разработчик</a>&nbsp;→ <a href="http://competentum.hantim.ru/jobs" class="company_name">Competentum</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/18584-servernyy-php-programmist">Серверный PHP-программист </a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/31398-verstalschik">Верстальщик</a>&nbsp;→ <a href="http://personium.hantim.ru/jobs" class="company_name">Personium</a>
+		</div>
+		<div class="job_item marked">
+			<a href="http://hantim.ru/jobs/21788-veb-programmist-php-js">Веб-программист (PHP, JS)</a>&nbsp;→ <a href="http://netology.hantim.ru/jobs" class="company_name">Нетология</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/29872-android-developer">Android Developer</a>&nbsp;→ <a href="http://epam.hantim.ru/jobs" class="company_name">EPAM Systems</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://hantim.ru/jobs/29874-asp-net-developer">ASP.NET Developer</a>&nbsp;→ <a href="http://epam.hantim.ru/jobs" class="company_name">EPAM Systems</a>
+		</div>
+  </div>
+  <div class="all"><a href="http://hantim.ru/">все вакансии</a></div>
+</div>
+
+		
+	<div class="block freelansim">
+	  <a href="http://freelansim.ru/" class="title"></a>
+	  <div class="tasks">
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57370">Поправить верстку на сайте</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57368">Дизайн и верстка страницы тестирования  </a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57336">Помощь в Redis Store</a>
+				</div>
+				<div class="task marked">
+					<a href="http://freelansim.ru/tasks/57364">Создание сервиса-хостинга для одностраничников на Yii (партнерство)</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57362">Разработать флеш-баннер-растяжку</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57334">Разработать CRM</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57350">Верстка страницы карточки товара</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57348">Ручной постинг рекламных сообщений на тематических форумах</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57346">Кастомизация темы WP</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/57340">Сверстать лендинг</a>
+				</div>
+
+	  </div>
+	  <div class="all"><a href="http://freelansim.ru/tasks">все заказы</a></div>
+	</div>
+
+		
+		
+		
+
+<div class="block similar_events">
+	<div class="title">Ближайшие события</div>
+		<div class="events_items">
+				<div class="event_item">
+						<div class="date">
+						<div class="dayname dayname_3"></div>
+						<div class="day">05</div>
+						<div class="month">мар</div>
+						</div>
+					<div class="title">
+						<a href="http://habrahabr.ru/events/4274/">Конференция AI&amp;BigData Lab</a>
+					</div>
+				</div>
+				<div class="event_item">
+						<div class="date">
+						<div class="dayname dayname_3"></div>
+						<div class="day">05</div>
+						<div class="month">мар</div>
+						</div>
+					<div class="title">
+						<a href="http://habrahabr.ru/events/4425/">JavaScript. Серверное программирование на Node.js</a>
+					</div>
+				</div>
+				<div class="event_item">
+						<div class="date">
+						<div class="dayname dayname_3"></div>
+						<div class="day">05</div>
+						<div class="month">мар</div>
+						</div>
+					<div class="title">
+						<a href="http://habrahabr.ru/events/4525/">Бухгалтерия без белья</a>
+					</div>
+				</div>
+				<div class="event_item">
+						<div class="date">
+						<div class="dayname dayname_3"></div>
+						<div class="day">05</div>
+						<div class="month">мар</div>
+						</div>
+					<div class="title">
+						<a href="http://habrahabr.ru/events/4491/">Подбор, оценка и мотивация ИТ персонала при помощи метапрограмм</a>
+					</div>
+				</div>
+				<div class="event_item">
+						<div class="date">
+						<div class="dayname dayname_4"></div>
+						<div class="day">06</div>
+						<div class="month">мар</div>
+						</div>
+					<div class="title">
+						<a href="http://habrahabr.ru/events/4427/">Авторизация доступа пользователей с использованием proxy-сервера Squid</a>
+					</div>
+				</div>
+		</div>
+	<div class="all"><a href="http://habrahabr.ru/events/">все события</a></div>
+</div>
+
+		
+  </div>
+  <div class="clear"></div>
+
+  
+        	
+	<div class="rotated_posts">
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/post/201408/" class="grey">Сообщество собрало больше 60 000 долларов на открытый независимый аудит TrueCrypt</a>
+			</div>
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/company/yandex/blog/208716/" class="grey">Алгоритмы и структуры данных поиска. Лекции и курсы от Яндекса</a>
+			</div>
+			<div class="rotated_post last">
+				<a href="http://habrahabr.ru/post/198940/" class="grey">В США рассматривают новый закон против патентных троллей</a>
+			</div>
+		<div class="clear"></div>
+	</div>
+
+        <div class="clear"></div>
+      </div>
+    </div>
+
+
+        <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/jquery.js"></script>
+        <script type="text/javascript">
+            $(document).ready( function(){
+
+                window.tmidLogin = function(){ return false; };
+
+                if( $.cookie('tmid_no_check') == undefined ) {
+                    var expire = new Date();
+                    expire.setMinutes(expire.getMinutes() + 10 );
+
+                    $.cookie('tmid_no_check', 1, { expires: expire } );
+
+                    $.getScript("https://id.tmtm.ru/checklogin", function(){
+                        if( window.tmidLogin() ) {
+                            window.location.href = $('#login').attr('href');
+                        }
+                    });
+
+
+                }
+            });
+
+        </script>
+
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // test gggg
+        // настройки всплывающих уведомлений
+        $.jGrowl.defaults.closerTemplate = '<div>Закрыть все уведомления</div>';         
+        
+        // настройки тултипов
+        $(".help-tip").tipTip({maxWidth: "300px", edgeOffset: 10});  
+        
+      });
+      // global vars
+      var g_base_url = 'habrahabr.ru';
+      var g_show_xpanel = false;
+      var g_base_fullurl = 'http://habrahabr.ru/';
+      var g_is_guest = false;
+    </script>
+    
+    <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/shortcuts.js"></script>
+    <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/to_top.js"></script>
+    <link href="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/_to_top.css" rel="stylesheet" media="all">
+
+    
+    <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/float_block.js"></script>
+    
+    <!-- <script type="text/javascript" src="/javascripts/1393865871/_parts/float_block.js"></script> //-->
+      <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter24049213 = new Ya.Metrika({id:24049213,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/24049213" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+<script type="text/javascript">
+	/*<![CDATA[*/
+	var ga = document.createElement('script');
+		ga.setAttribute('async', 'true');
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	/* ]]>*/
+</script>
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(
+	    ['_setAccount', 'UA-726094-1'],
+	    ['_setDomainName', '.habrahabr.ru'],
+	    ["_addOrganic", "mail.ru", "q"],
+	    ["_addOrganic","rambler.ru", "words"],
+	    ["_addOrganic","nigma.ru", "s"],
+	    ["_addOrganic","blogs.yandex.ru", "text"],
+	    ["_addOrganic","webalta.ru", "q"],
+	    ["_addOrganic","aport.ru", "r"],
+	    ["_addOrganic","akavita.by", "z"],
+	    ["_addOrganic","meta.ua", "q"],
+	    ["_addOrganic","bigmir.net", "q"],
+	    ["_addOrganic","tut.by", "query"],
+	    ["_addOrganic","all.by", "query"],
+	    ["_addOrganic","i.ua", "q"],
+	    ["_addOrganic","online.ua", "q"],
+	    ["_addOrganic","a.ua", "s"],
+	    ["_addOrganic","ukr.net", "search_query"],
+	    ["_addOrganic","search.com.ua", "q"],
+	    ["_addOrganic","search.ua", "query"],
+	    ["_addOrganic","poisk.ru", "text"],
+	    ["_addOrganic","km.ru", "sq"],
+	    ["_addOrganic","liveinternet.ru", "ask"],
+	    ["_addOrganic","gogo.ru", "q"],
+	    ["_addOrganic","gde.ru", "keywords"],
+	    ["_addOrganic","quintura.ru", "request"],
+	    ['_trackPageview']
+	);
+	document.documentElement.firstChild.appendChild(ga);
+</script>
+
+
+<!-- tns-counter.ru -->
+<script type="text/javascript">
+(new Image()).src = '//www.tns-counter.ru/V13a***R>' + document.referrer.replace(/\*/g,'%2a') + '*tmtm_ru/ru/UTF-8/tmsec=habrahabr_total/' + Math.round(Math.random()*1E9);
+</script>
+<noscript>
+	<img src="http://www.tns-counter.ru/V13a****tmtm_ru/ru/UTF-8/tmsec=habrahabr_total/" width="1" height="1" alt="" />
+</noscript>
+<!--/ tns-counter.ru -->
+
+    <script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/advertising.js"></script>
+    	<script type="text/javascript" src="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B8%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA,%20%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B7%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D1%85%20%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0%D1%85%20%28C_C++,%20Pascal%29%20_%20%D0%A5%D0%B0%D0%B1%D1%80%D0%B0%D1%85%D0%B0%D0%B1%D1%80_files/a"></script>
+
+    
+    <div id="footer">
+	<dl>
+		<dd><a href="https://auth.habrahabr.ru/login/">Войти</a></dd>
+		<dd><a href="https://auth.habrahabr.ru/register/">Регистрация</a></dd>
+	</dl>
+	<dl>
+		<dt>Разделы</dt>
+
+		<!--dd><a href="http://habrahabr.ru/qa/">Q&A</a></dd-->
+		<dd><a href="http://habrahabr.ru/hubs/">Хабы</a></dd>
+		<dd><a href="http://habrahabr.ru/events/">События</a></dd>
+		<dd><a href="http://habrahabr.ru/companies/">Компании</a></dd>
+		<dd><a href="http://habrahabr.ru/users/">Пользователи</a></dd>
+	</dl>
+	<dl>
+		<dt>Посты</dt>
+		<dd><a href="http://habrahabr.ru/posts/top/">Лучшие</a></dd>
+		<dd><a href="http://habrahabr.ru/posts/collective/">Тематические</a></dd>
+		<dd><a href="http://habrahabr.ru/posts/corporative/">Корпоративные</a></dd>
+		<dd><a href="http://habrahabr.ru/sandbox/">Песочница</a></dd>
+	</dl>
+	<dl>
+		<dt>Инфо</dt>
+		<dd><a href="http://habrahabr.ru/info/about/">О сайте</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/rules/">Правила</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/">Помощь</a></dd>
+		<dd><a href="http://habrahabr.ru/info/agreement/">Соглашение</a></dd>
+		<dd><a href="http://habrahabr.ru/info/stats/">Статистика</a></dd>
+	</dl>
+	<dl>
+		<dt>Услуги</dt>
+		<dd><a href="http://habrahabr.ru/info/advertising/">Реклама</a></dd>
+		<dd><a href="http://habrahabr.ru/info/advertising/corporate/">Корпоративные тарифы</a></dd>
+		<dd><a href="http://habrahabr.ru/info/advertising/workshops/">Семинары</a></dd>
+		<dd><a href="http://habrahabr.ru/special/">Спецпроекты</a></dd>
+		<dd><a href="http://habrahabr.ru/special/minsvyaz/" style="color:green;">Льготы стартапам</a></dd>
+	</dl>
+	<div class="copyright">
+
+		<div class="about">
+			<a href="http://tmtm.ru/">TM</a>
+			© 2006–2014
+			<br><br>
+			<a href="http://habrahabr.ru/feedback/">Служба поддержки</a><br><br>
+			<a href="http://m.habrahabr.ru/">Мобильная версия</a><br><br>
+
+
+			<div class="social_accounts">
+				<a href="https://twitter.com/habrahabr" class="tw"></a>
+				<a href="https://www.facebook.com/habrahabr.ru" class="fb"></a>
+				<a href="http://vk.com/habr" class="vk"></a>
+				<!-- <a href="" class="gp"></a> //-->
+			</div>
+
+		</div>
+	</div>
+
+</div>    
+    <div class="footer_logos">
+		
+		<div class="project brainstorage">
+			<a href="http://brainstorage.ru/" class="icon "></a>
+			<div class="text">Все мозги в одном месте</div>
+		</div>
+
+		<div class="project toster">
+			<a href="http://toster.ru/" class="icon "></a>
+			<div class="text">Q&amp;A-сервис для разработчиков</div>
+		</div>
+		
+		<div class="project freelansim">
+			<a href="http://freelansim.ru/" class="icon "></a>
+			<div class="text">Заказы для фрилансеров</div>
+		</div>
+		
+		
+		<div class="project hantim">
+			<a href="http://hantim.ru/" class="icon "></a>
+			<div class="text">Вакансии для айтишников</div>
+		</div>
+		
+		<div class="project autokadabra">
+			<a href="http://autokadabra.ru/" class="icon "></a>
+			<div class="text ">Уютная и дружелюбная</div>
+		</div>
+		
+</div>
+
+
+    
+    
+  
+
+<div id="AutocompleteContainter_8ee51" style="position: absolute; z-index: 9999; top: 51px; left: 936.5px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_8ee51" style="display: none; width: 300px; max-height: 400px;"></div></div></div><div id="AutocompleteContainter_e5f2a" style="position: absolute; z-index: 9999; top: 2px; left: 0px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_e5f2a" style="display: none; width: 300px; max-height: 400px;"></div></div></div><div id="tiptip_holder" style="max-width:300px;"><div id="tiptip_arrow"><div id="tiptip_arrow_inner"></div></div><div id="tiptip_content"></div></div><div style="display: none;" class="to_top"><div class="to_top_panel"><div class="to_top_button" title="Наверх"><span class="arrow">↑</span> <span class="label">наверх</span></div>  </div></div></body></html>

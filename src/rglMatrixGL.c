@@ -1,9 +1,11 @@
-#include "rglOGLmat.h" 
-
+#include "../include/rglMatrixGL.h" 
+#include "../include/rglMatrix4.h"
+#include "../include/rglMatrix3.h"
+#include "../include/rglVector3.h"
 
 //--------------------------------OPENGL MATRIX-----------------------------------------------------------------------------------------------------
 
-GLint  rglFrustum(rglMat4 dest,GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar)
+GLint  rglFrustum(rglMat4_t dest,GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar)
 {	
 	
 	    dest[0] = (2 * zNear / (right - left));
@@ -30,7 +32,7 @@ GLint  rglFrustum(rglMat4 dest,GLfloat left, GLfloat right, GLfloat bottom, GLfl
 }
 
 
-GLint  rglPerspective(rglMat4 dest,GLfloat fov, GLfloat aspect, GLfloat znear, GLfloat zfar)
+GLint  rglPerspective(rglMat4_t dest,GLfloat fov, GLfloat aspect, GLfloat znear, GLfloat zfar)
 {	
 	
 	GLfloat rad = fov * DEG2RAD;
@@ -45,7 +47,7 @@ GLint  rglPerspective(rglMat4 dest,GLfloat fov, GLfloat aspect, GLfloat znear, G
 	return 1;
 }
 
-GLint rglOrtho(rglMat4 dest, GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat znear, GLfloat zfar)
+GLint rglOrtho(rglMat4_t dest, GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat znear, GLfloat zfar)
 {	
 	
 	for (GLint i =0; i<16; i++)
@@ -60,9 +62,9 @@ GLint rglOrtho(rglMat4 dest, GLfloat left, GLfloat right, GLfloat bottom, GLfloa
 	return 1;
 }
 
-GLint rglTranslate(rglMat4 dest, GLfloat x, GLfloat y, GLfloat z)
+GLint rglTranslate(rglMat4_t dest, GLfloat x, GLfloat y, GLfloat z)
 {
-	rglMat4 m;
+	rglMat4_t m;
 	rglMatrix4Identity(m);
 	m[12]+=x;
 	m[13]+=y;
@@ -72,9 +74,9 @@ GLint rglTranslate(rglMat4 dest, GLfloat x, GLfloat y, GLfloat z)
 	return 1;	
 }
 
-GLint rglScale(rglMat4 dest, GLfloat x, GLfloat y, GLfloat z)
+GLint rglScale(rglMat4_t dest, GLfloat x, GLfloat y, GLfloat z)
 {
-	rglMat4 m;
+	rglMat4_t m;
 	rglMatrix4Identity(m);
 	m[0]=x;
 	m[5]=y;
@@ -83,15 +85,15 @@ GLint rglScale(rglMat4 dest, GLfloat x, GLfloat y, GLfloat z)
 	return 1;		
 }
 
-GLint rglRotate( rglMat4 dest, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
+GLint rglRotate( rglMat4_t dest, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
     GLfloat rad = angle * DEG2RAD;
     GLfloat cosA = cos(rad);
     GLfloat sinA = sin(rad);
    
-	rglMat4 m;
+	rglMat4_t m;
 	rglMatrix4Identity(m);
-    GLfloat ux =x;
+    GLfloat ux = x;
 	GLfloat uy = y;
 	GLfloat uz = z;
 	
@@ -115,30 +117,31 @@ GLint rglRotate( rglMat4 dest, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 	
 }
 
-GLint rglLookAt(rglMat4 dest, rglVec3 v1, rglVec3 v2, rglVec3 v3)
+GLint rglLookAt(rglMat4_t dest, rglVec3_t v1, rglVec3_t v2, rglVec3_t v3)
 {
-	
-	rglVec3 f,up,x,y;
-	rglMat4 m1;
+	rglVec3_t f,up,s,u;
+	rglMat4_t m1;
 	rglMatrix4Identity(m1);
-    f=rglVector3Sub(v2,v1);
-    f=rglVector3Normalize(f);	
-	up=rglVector3Normalize(v3);	
-    x=rglVector3Cross(f,up);
-	x=rglVector3Normalize(x);	
-    y= rglVector3Cross(x,f);  
-    y=rglVector3Normalize(y);	
-    m1[0] = x.x; m1[4] = x.y; m1[8] = x.z; m1[12] = 0.0;
-    m1[1] = y.x; m1[5] = y.y; m1[9] = y.z; m1[13] = 0.0;
+	rglVector3Copy(&f, v2);
+	rglVector3Sub(&f,v1);
+	rglVector3Normalize(&f);
+	rglVector3Copy(&up, v3);
+	rglVector3Normalize(&up);
+	rglVector3Cross(&s,f,up);
+	rglVector3Normalize(&s);
+	rglVector3Cross(&u,s,f);
+	rglVector3Normalize(&u);
+	m1[0] = s.x; m1[4] = s.y; m1[8] = s.z; m1[12] = 0.0;
+    m1[1] = u.x; m1[5] = u.y; m1[9] = u.z; m1[13] = 0.0;
     m1[2] = -f.x; m1[6] = -f.y; m1[10] = -f.z; m1[14] = 0.0;
     m1[3] = 0.0; m1[7] = 0.0; m1[11] = 0.0; m1[15] = 1.0;
-   	rglTranslate(m1,-v1.x,-v1.y,-v1.z);	   	
-	rglMatrix4Multiply(dest,m1);
+    rglTranslate(m1,-v1.x,-v1.y,-v1.z);
+    rglMatrix4Multiply(dest,m1);
 	return 1;
 	
 }
 
-GLint rglMatrixNormal(rglMat3 dest,rglMat4 src)
+GLint rglMatrixNormal(rglMat3_t dest,rglMat4_t src)
  {
 	rglMatrix4to3(dest,src);
 	rglMatrix3Inverse(dest);  

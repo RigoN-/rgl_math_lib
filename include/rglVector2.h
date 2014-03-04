@@ -53,7 +53,7 @@ GLint rglMatrix3MulVector2(const rglMat3_t m, rglVec2_t *v);
 GLint rglMatrix3MulTexCoord2(const rglMat3_t m, rglTex2_t *v);
 
 GLint rglVector2Cmp(rglVec2_t v1, rglVec2_t v2);
-GLint rglTexCoord2Cmp(rglTex2_t v1, rglTex2_t v2)
+GLint rglTexCoord2Cmp(rglTex2_t v1, rglTex2_t v2);
 
 GLint rglVector2Print(rglVec2_t v);
 GLint rglTexCoord2Print(rglTex2_t v);

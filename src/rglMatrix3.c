@@ -1,9 +1,10 @@
-#include "rglMat3.h" 
-
-
+#include "../include/rglMatrix3.h" 
+#include "../include/rglMatrix2.h" 
+#include "../include/rglVector2.h"
+#include "../include/rglVector3.h"
 
 //--------------------------------MATRIX3-----------------------------------------------------------------------------------------------------
-GLint rglMatrix3Initf(rglMat3 dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8)
+GLint rglMatrix3Initf(rglMat3_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8)
 {
 	dest[0]=m0;dest[3]=m3;dest[6]=m6;
 	dest[1]=m1;dest[4]=m4;dest[7]=m7;
@@ -11,14 +12,14 @@ GLint rglMatrix3Initf(rglMat3 dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3
 	return 1;
 }
 
-GLint rglMatrix3Identity(rglMat3 dest)
+GLint rglMatrix3Identity(rglMat3_t dest)
 {	
-	rglMat3 m_identity3={1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0};	
+	rglMat3_t m_identity3={1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0};	
 	memcpy(dest, m_identity3,sizeof(dest)*9); 			
 	return 1; 
 }
 
-GLint rglMatrix4to3(rglMat3 dest, rglMat4 src)
+GLint rglMatrix4to3(rglMat3_t dest, rglMat4_t src)
 {
 	
  	dest[0] =  src[0];
@@ -33,16 +34,16 @@ GLint rglMatrix4to3(rglMat3 dest, rglMat4 src)
   return 1;
 }
 
-GLint rglMatrix3Copy(rglMat3 dest, rglMat3 src) 
+GLint rglMatrix3Copy(rglMat3_t dest, rglMat3_t src) 
 {
 		memcpy(&dest[0], &src[0],sizeof(dest)*9); 						
    return 1;   
 }
 
-GLint rglMatrix3Multiply(rglMat3 m1, rglMat3 m2)
+GLint rglMatrix3Multiply(rglMat3_t m1, rglMat3_t m2)
 {
 	GLint n;
-	rglMat3 dest={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	rglMat3_t dest={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
  	dest[0] = m1[0] * m2[0] + m1[3] * m2[1] + m1[6] * m2[2] ;
     dest[1] = m1[1] * m2[0] + m1[4] * m2[1] + m1[7] * m2[2] ;
     dest[2] = m1[2] * m2[0] + m1[5] * m2[1] + m1[8] * m2[2] ;
@@ -61,7 +62,7 @@ GLint rglMatrix3Multiply(rglMat3 m1, rglMat3 m2)
     return 1;
 }
 
-GLint rglMatrix3MulInt(rglMat3 src, int d)
+GLint rglMatrix3MulInt(rglMat3_t src, int d)
 {
 	int i;
 	for(i=0;i<9;i+=1)
@@ -69,7 +70,7 @@ GLint rglMatrix3MulInt(rglMat3 src, int d)
     return 1;
 }
 
-GLint rglMatrix3MulFloat(rglMat3 src, GLfloat f)
+GLint rglMatrix3MulFloat(rglMat3_t src, GLfloat f)
 {
 	int i;
 	for(i=0;i<9;i+=1)
@@ -77,9 +78,9 @@ GLint rglMatrix3MulFloat(rglMat3 src, GLfloat f)
     return 1;
 }
 
-GLint rglMatrix3Transpose(rglMat3 src) 
+GLint rglMatrix3Transpose(rglMat3_t src) 
 {
-	rglMat3 mt;
+	rglMat3_t mt;
    mt[0] = src[0]; mt[3] = src[1]; mt[6] = src[2]; 
    mt[1] = src[3]; mt[4] = src[4]; mt[7] = src[5];
    mt[2] = src[6]; mt[5] = src[7]; mt[8] = src[8];
@@ -92,14 +93,14 @@ GLint rglMatrix3Transpose(rglMat3 src)
 // m2 m5 m8
 //
 //D=(m0*m4*m8+m1*m5*m6+m3*m7*m2)-(m6*m4*m2+m1*m3*m8+m0*m5*m7)
-GLfloat rglMatrix3Det(rglMat3 m)
+GLfloat rglMatrix3Det(rglMat3_t m)
 {
   GLfloat det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;
   							
   return   det;
 }
 
-GLint rglMatrix3Minor(rglMat2 dest,rglMat3 src, int n) 
+GLint rglMatrix3Minor(rglMat2_t dest,rglMat3_t src, int n) 
 {
 	
 	int k,r,c=0;
@@ -117,14 +118,14 @@ GLint rglMatrix3Minor(rglMat2 dest,rglMat3 src, int n)
    return 1;
 }
 
-GLfloat rglMatrix3Minorf(rglMat3 src, int n) 
+GLfloat rglMatrix3Minorf(rglMat3_t src, int n) 
 {
-	rglMat2 dest;
+	rglMat2_t dest;
 	rglMatrix3Minor(dest,src,n);			
     return rglMatrix2Det(dest);
 }
 
-GLint rglMatrix3Adjoin(rglMat3 dest,rglMat3 src) 
+GLint rglMatrix3Adjoin(rglMat3_t dest,rglMat3_t src) 
 {
 	
 	int n;
@@ -145,9 +146,9 @@ GLint rglMatrix3Adjoin(rglMat3 dest,rglMat3 src)
  //   транспонировать полученную матрицу - в результате будет получена союзная матрица,
  //   разделить каждый элемент союзной матрицы на определитель исходной матрицы.
 
- GLint rglMatrix3Inverse(rglMat3 src)
+ GLint rglMatrix3Inverse(rglMat3_t src)
 {
-  rglMat3 mt;
+  rglMat3_t mt;
   GLfloat det= rglMatrix3Det(src);
   if (det==0) return 0;
   rglMatrix3Adjoin(mt,src);
@@ -157,7 +158,7 @@ GLint rglMatrix3Adjoin(rglMat3 dest,rglMat3 src)
   return 1;
 }
  /*
- GLint rglMatrix3Inverse(rglMat3 dest,rglMat3 src)
+ GLint rglMatrix3Inverse(rglMat3_t dest,rglMat3_t src)
 {
  
   GLfloat x= rglMatrix3Det(src);
@@ -178,7 +179,7 @@ GLint rglMatrix3Adjoin(rglMat3 dest,rglMat3 src)
 */
 
 
-GLint rglMatrix3Print(rglMat4 m)
+GLint rglMatrix3Print(rglMat3_t m)
 {
 	printf("m[0] = %5.2f m[3] = %5.2f m[6] = %5.2f \n", m[0],m[3],m[6]);
 	printf("m[1] = %5.2f m[4] = %5.2f m[7] = %5.2f \n", m[1],m[4],m[7]);

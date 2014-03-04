@@ -210,16 +210,16 @@ GLint rglMatrix4MulTexCoord2(const rglMat4_t m, rglTex2_t *v)
 GLint rglMatrix3MulVector2(const rglMat3_t m, rglVec2_t *v)
 {   
 	    
-    v->x = v->x * m[0] + v->y * m[4] + m[8];
-    v->y = v->x * m[1] + v->y * m[5] + m[9];    
+    v->x = v->x * m[0] + v->y * m[3] + m[6];
+    v->y = v->x * m[1] + v->y * m[4] + m[7];    
     return 0;
 }
 
 GLint rglMatrix3MulTexCoord2(const rglMat3_t m, rglTex2_t *v)
 {   
 	    
-    v->s = v->s * m[0] + v->t * m[4] + m[8];
-    v->t = v->s * m[1] + v->t * m[5] + m[9];    
+    v->s = v->s * m[0] + v->t * m[3] + m[6];
+    v->t = v->s * m[1] + v->t * m[4] + m[7];    
     return 0;
 }
 

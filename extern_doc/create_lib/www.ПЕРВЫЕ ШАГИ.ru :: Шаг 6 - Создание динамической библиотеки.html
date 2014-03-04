@@ -1,0 +1,131 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 6 - Создание динамической библиотеки</title><link rel="stylesheet" type="text/css" href="www.%D0%9F%D0%95%D0%A0%D0%92%D0%AB%D0%95%20%D0%A8%D0%90%D0%93%D0%98.ru%20::%20%D0%A8%D0%B0%D0%B3%206%20-%20%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8_files/2.css"></head><body alink="red" bgcolor="white" link="blue" text="black" vlink="blue"><h2>Шаг 6 - Создание динамической библиотеки</h2><table align="center" border="0"><tbody><tr><td>
+<script type="text/javascript"><!--
+google_ad_client = "pub-2721325097469880";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+//2007-06-25: Основной
+google_ad_channel = "4805213305";
+//-->
+</script>
+<script type="text/javascript" src="www.%D0%9F%D0%95%D0%A0%D0%92%D0%AB%D0%95%20%D0%A8%D0%90%D0%93%D0%98.ru%20::%20%D0%A8%D0%B0%D0%B3%206%20-%20%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8_files/show_ads.js">
+</script>
+</td></tr></tbody></table>
+
+<script language="JavaScript"><!--
+d=document;js=10;a=';r='+escape(d.referrer)
+//--></script><script language="JavaScript1.1"><!--
+js=11;a+=';j='+navigator.javaEnabled()
+//--></script><script language="JavaScript1.2"><!--
+js=12;s=screen;a+=';s='+s.width+'*'+s.height
+a+=';d='+(s.colorDepth?s.colorDepth:s.pixelDepth)
+//--></script><script language="JavaScript1.3"><!--
+js=13//--></script><script language="JavaScript"><!--
+d.write('<iframe src="http://top.list.ru/counter'+
+'?id=23099;js='+js+a+'" height=1 width=1 border=0></iframe>')
+if(js>11)d.write('<'+'!-- ')//--></script><iframe src="www.%D0%9F%D0%95%D0%A0%D0%92%D0%AB%D0%95%20%D0%A8%D0%90%D0%93%D0%98.ru%20::%20%D0%A8%D0%B0%D0%B3%206%20-%20%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8_files/counter_002.gif" border="0" height="1" width="1"></iframe><!-- <noscript><iframe
+src="http://top.list.ru/counter?js=na;id=23099"
+height=1 width=1 alt=""></iframe></noscript><script language="JavaScript"><!--
+if(js>11)d.write('--'+'>')
+//-->
+
+<div style="margin:10px;"><p>Как мы уже говорили в шаге <a href="http://www.firststeps.ru/linux/r.php?4">"Шаг 4 - Библиотеки объектных файлов"</a>
+ динамические библиотеки немного лучше статических, но их использование 
+более сложное. И не из-за того, что процесс загрузки программы 
+замедляется. Проблемы начинаются уже на этапе компиляции :)
+</p><p>Для начала стоит сказать, что объектный файл создаваемый нашим 
+проверенным способом вовсе не подходит для динамических библиотек. 
+Связано это с тем, что все объектные файлы создаваемые обычным образом 
+не имеют представления о том в какие адреса памяти будет загружена 
+использующая их программа. Несколько различных программ могут 
+использовать одну библиотеку, и каждая из них располагается в различном 
+адресном пространстве. Поэтому требуется, чтобы переходы в функциях 
+библиотеки (операции <b>goto</b> на ассемблере) использовали не 
+абсолютную адресацию, а относительную. То есть генерируемый компилятором
+ код должен быть независимым от адресов, такая технология получила 
+название <b>PIC - Position Independent Code</b>. В компиляторе <b>gcc</b> данная возможность включается ключом <b>-fPIC</b>.
+</p><p>Теперь компилирование наших файлов будет иметь вид:
+</p><pre>dron:~# gcc -fPIC -c f1.c
+dron:~# gcc -fPIC -c f2.c
+</pre>
+<p>Динамическая библиотека это уже не архивный файл, а настоящая 
+загружаемая программа, поэтому созданием динамических библиотек 
+занимается сам компилятор <b>gcc</b>. Для того, чтобы создать динамическую библиотеку надо использовать ключ <b>-shared</b>:
+</p><pre>dron:~# gcc -shared -o libfsdyn.so f1.o f2.o
+</pre>
+<p>В результате получим динамическую библиотеку <b>libfsdyn.so</b>, которая по моей задумке будет динамической версией библиотеки <b>libfs.a</b>,
+ что видно из названия :) Теперь, чтобы компилировать результирующий 
+файл с использованием динамической библиотеки нам надо собрать файл 
+командой:
+</p><pre>dron:~# gcc -с main.с
+dron:~# gcc main.o -L. -lfsdyn -o rezultdyn
+</pre>
+<p>Если теперь Вы сравните файлы, полученные при использовании 
+статической и динамической библиотеки, то увидите, что их размеры 
+отличаются. В данном случае файл созданный с динамической библиотекой 
+занимает чуть больше места, но это лишь от того, что программа 
+используемая нами совершенно примитивная и львиную долю там занимает 
+специальный код для использования динамических возможностей. В реальных 
+условиях, когда используются очень большие функции размер программы с 
+использованием динамической библиотеки значительно меньше.
+</p><p>На этом фокусы не кончаются, если Вы сейчас попробуете запустить файл <b>rezultdyn</b>, то получите ошибку:
+</p><pre>dron:~# ./rezultdyn
+./rezultdyn: error in loading shared libraries: libfsdyn.so: cannot open 
+shared object file: No such file or directory
+dron:~#
+</pre>
+<p>Это сообщение выдает динамический линковщик. Он просто не может найти
+ файл нашей динамической библиотеки. Дело в том, что загрузчик ищет 
+файлы динамических библиотек в известных ему директориях, а наша 
+директория ему не известна. Но это мы чуть отложим, потому что это 
+достаточно сложный вопрос.
+</p><p>А сейчас стоит поговорить еще об одном моменте использования библиотек. Я специально создал динамическую библиотеку с названием <b>fsdyn</b>, чтобы она отличалась от названия статической библиотеки <b>fs</b>. Дело в том, что если у Вас две библиотеки статическая и динамическая с одинаковыми названиями, то есть <b>libfs.a</b> и <b>libfs.so</b>, то компилятор всегда будет использовать динамическую библиотеку.
+</p><p>Связано это с тем, что в ключе <b>-l</b> задается часть имени библиотеки, а префикс <b>lib</b> и окончание <b>.a</b> или <b>.so</b>
+ приставляет сам компилятор. Так вот алгоритм работы компилятора таков, 
+что если есть динамическая библиотека, то она используется по умолчанию.
+ Статическая же библиотека используется когда компилятор не может 
+обнаружить файл <b>.so</b> этой библиотеки. Во всей имеющейся у меня документации пишется, что если использовать ключ <b>-static</b>, то можно насильно заставить компилятор использовать статическую библиотеку. Отлично, попробуем...
+</p><pre>dron:~# gcc -staticmain.o -L. -lfs  -o rez1
+</pre>
+<p>Как бы я не пробовал играть с позицией ключа <b>-static</b>, результирующий файл <b>rez1</b> получается размером в 900 Кб. После применения программы <b>strip</b>
+ размер ее уменьшается до 200 Кб, но это же не сравнить с тем, что наша 
+первая статическая компиляция давала программу размером 10 Кб. А связано
+ это с тем, что любая программа написанная на <b>C/C++</b> в <b>Linux</b> использует стандартную библиотеку <b>"C" library</b>, которая содержит в себе определения таких функций, как <b>printf()</b>, <b>write()</b> и всех остальных. Эта библиотека линкуется к файлу как динамическая, чтобы все программы написанные на <b>C++</b> могли использовать единожды загруженные функции. Ну, а при указании ключа <b>-static</b> компилятор делает линковку <b>libc</b> статической, поэтому размер кода увеличивается на все 200 Кб.
+</p><p>Этот эффект я не смог побороть. Поэтому я пришел к выводу, что 
+статическую библиотеку и динамическую лучше всего создавать с разными 
+именами. Надеюсь в будущем мы с Вами еще разберемся с этой загвоздкой, 
+но если действительно все так плохо, то решение с различными именами 
+будет единственно верным.</p></div><center><hr><a href="http://www.firststeps.ru/linux/r.php?5">Предыдущий Шаг</a> | <a href="http://www.firststeps.ru/linux/r.php?7">Следующий Шаг</a> | <a href="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#6%27_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><table align="center" border="0"><tbody><tr><td>
+<script type="text/javascript"><!--
+google_ad_client = "pub-2721325097469880";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+//2007-06-25: Основной
+google_ad_channel = "4805213305";
+//-->
+</script>
+<script type="text/javascript" src="www.%D0%9F%D0%95%D0%A0%D0%92%D0%AB%D0%95%20%D0%A8%D0%90%D0%93%D0%98.ru%20::%20%D0%A8%D0%B0%D0%B3%206%20-%20%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8_files/show_ads.js">
+</script>
+</td></tr></tbody></table>
+
+<script language="JavaScript"><!--
+d=document;js=10;a=';r='+escape(d.referrer)
+//--></script><script language="JavaScript1.1"><!--
+js=11;a+=';j='+navigator.javaEnabled()
+//--></script><script language="JavaScript1.2"><!--
+js=12;s=screen;a+=';s='+s.width+'*'+s.height
+a+=';d='+(s.colorDepth?s.colorDepth:s.pixelDepth)
+//--></script><script language="JavaScript1.3"><!--
+js=13//--></script><script language="JavaScript"><!--
+d.write('<iframe src="http://top.list.ru/counter'+
+'?id=23099;js='+js+a+'" height=1 width=1 border=0></iframe>')
+if(js>11)d.write('<'+'!-- ')//--></script><iframe src="www.%D0%9F%D0%95%D0%A0%D0%92%D0%AB%D0%95%20%D0%A8%D0%90%D0%93%D0%98.ru%20::%20%D0%A8%D0%B0%D0%B3%206%20-%20%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8_files/counter_002.gif" border="0" height="1" width="1"></iframe><!-- <noscript><iframe
+src="http://top.list.ru/counter?js=na;id=23099"
+height=1 width=1 alt=""></iframe></noscript><script language="JavaScript"><!--
+if(js>11)d.write('--'+'>')
+//-->
+
+</center><br><br></body></html>

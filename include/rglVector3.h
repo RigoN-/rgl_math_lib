@@ -1,8 +1,7 @@
 #ifndef _VEC3_H
 #define _VEC3_H
 
-#include "rglMathType.h"
-#include "rglMath3D.h"
+#include "rglMath_t.h"
 
 //vector3-----------------------------------------------------------------------------------------------------------------------------------------------
 GLint rglVector3Set(rglVec3_t *v, GLfloat x, GLfloat y, GLfloat z);
@@ -32,6 +31,18 @@ GLint rglColor3Sub(rglCol3_t *v1, rglCol3_t v2);
 GLfloat rglVector3Dot(rglVec3_t v1, rglVec3_t v2);
 GLfloat rglTexCoord3Dot(rglTex3_t v1, rglTex3_t v2);
 GLfloat rglColor3Dot(rglCol3_t v1, rglCol3_t v2);
+//
+GLfloat rglVector3Cos(rglVec3_t v1, rglVec3_t v2);
+GLfloat rglVector3AngleD(rglVec3_t v1, rglVec3_t v2);
+GLfloat rglVector3AngleR(rglVec3_t v1, rglVec3_t v2);
+
+GLint rglMatrix4MulVector3(const rglMat4_t m, rglVec3_t *v);
+
+GLint rglMatrix3MulVector3(const rglMat3_t m, rglVec3_t *v);
+
+GLint rglVector2Cmp(rglVec2_t v1, rglVec2_t v2);
+
+//
 
 GLint rglVector3Cross(rglVec3_t *res, rglVec3_t v1, rglVec3_t v2);
 
@@ -54,32 +65,11 @@ GLint rglTex3ToVec3(rglVec3_t *v, rglTex3_t t);
 
 
 
+
 GLint rglVector3Print(rglVec3_t v);
 GLint rglTexCoord3Print(rglTex3_t v);
-GLint rglColor3Print(rglCol3_t *v);
+GLint rglColor3Print(rglCol3_t v);
 /*
-rglVec3 rglVector3Set(GLfloat x, GLfloat y, GLfloat z);
-rglTex3 rglTex3Set(GLfloat s, GLfloat t, GLfloat r);
-rglCol3 rglColor3Set(GLfloat r, GLfloat g, GLfloat b);
-GLint rglVector3Clear(rglVec3 v);
-GLint rglVector3Copy( rglVec3 dest, rglVec3 src);
- GLint rglVector3Print(rglVec3 v);
-rglVec3 rglVector3Scale(rglVec3  v1, GLfloat scale );
-rglVec3 rglVector3Add( rglVec3 v1, rglVec3 v2);
-rglVec3 rglVector3Sub( rglVec3 v1, rglVec3 v2);
-GLfloat rglVector3Dot( rglVec3 v1, rglVec3 v2);
-rglVec3 rglVector3Cross(rglVec3 v1, rglVec3 v2); 
-GLfloat rglVector3Length(rglVec3 v);
-rglVec3 rglVector3Normalize(rglVec3 v1);   
-
-
-rglVec2 rglVec3ToVec2(rglVec3 v1);
-
-
-
-
-
-
 
 rglVec3 rglVector3Tangent(rglVec3 v1, rglVec3 v2, rglVec3 v3, rglTex2 t1, rglTex2 t2, rglTex2 t3);
 rglVec3 rglVector3Binormal(rglVec3 v1, rglVec3 v2, rglVec3 v3, rglTex2 t1, rglTex2 t2, rglTex2 t3);

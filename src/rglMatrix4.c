@@ -1,9 +1,13 @@
-#include "rglMat4.h"
+#include "../include/rglMatrix4.h"
+#include "../include/rglMatrix3.h"
+#include "../include/rglMatrix2.h"
+#include "../include/rglVector4.h"
+#include "../include/rglVector3.h"
 
-rglMat4 m_identity4={1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0};
+rglMat4_t m_identity4={1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0};
 
 //--------------------------------MATRIX4-----------------------------------------------------------------------------------------------------
-GLint rglMatrix4Set(rglMat4 dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8,GLfloat m9,GLfloat m10,GLfloat m11,GLfloat m12,GLfloat m13,GLfloat m14,GLfloat m15)
+GLint rglMatrix4Set(rglMat4_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8,GLfloat m9,GLfloat m10,GLfloat m11,GLfloat m12,GLfloat m13,GLfloat m14,GLfloat m15)
 {	
 	dest[0]=m0; dest[4]=m4;	dest[8]=m8;		dest[12]=m12;
 	dest[1]=m1; dest[5]=m5;	dest[9]=m9;		dest[13]=m13;
@@ -12,15 +16,15 @@ GLint rglMatrix4Set(rglMat4 dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,G
 	return 1;
 }
 
-GLint rglMatrix4Identity(rglMat4 dest)
+GLint rglMatrix4Identity(rglMat4_t dest)
 {		
 	memcpy(dest, m_identity4,sizeof(dest)*16); 	
 	return 1;
 }
 
-GLint rglMatrix4MulInt(rglMat4 src, int d)
+GLint rglMatrix4MulInt(rglMat4_t src, int d)
 {
-	rglMat4 mt;
+	rglMat4_t mt;
 	int i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*d;
@@ -28,10 +32,10 @@ GLint rglMatrix4MulInt(rglMat4 src, int d)
     return 1;
 }
 
-GLint rglMatrix4MulFloat(rglMat4 src, GLfloat f)
+GLint rglMatrix4MulFloat(rglMat4_t src, GLfloat f)
 {
 	
-	rglMat4 mt;
+	rglMat4_t mt;
 	int i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*f;
@@ -39,25 +43,10 @@ GLint rglMatrix4MulFloat(rglMat4 src, GLfloat f)
 	return 1;
 }
 
-GLint rglMatrix4MulVector2(const rglMat4 m, rglVec2 *v2)
-{
-	v2->x = v2->x * m[0] + v2->y * m[4] + m[8] + m[12];
-    v2->y = v2.x * m[1] + v3.y * m[5] + m[9] + m[13]; 
-	return 1;
-}
-GLint rglMatrix4MulVector3(const rglMat4 m, rglVec3 *v3)
-{
-	return 1;
-}
-GLint rglMatrix4MulVector4(const rglMat4 m, rglVec4 *v4)
-{
-	return 1;
-}
 
 
 
-
-GLint rglMatrix4Transpose(rglMat4 dest, rglMat4 m2) 
+GLint rglMatrix4Transpose(rglMat4_t dest, rglMat4_t m2) 
 {
 	
    dest[0] = m2[0]; dest[4] = m2[1]; dest[8] = m2[2]; dest[12] = m2[3];
@@ -67,15 +56,15 @@ GLint rglMatrix4Transpose(rglMat4 dest, rglMat4 m2)
    return 1;
 }
 
-GLint rglMatrix4Copy(rglMat4 dest, rglMat4 src) 
+GLint rglMatrix4Copy(rglMat4_t dest, rglMat4_t src) 
 {
 	memcpy(dest, src,sizeof(dest)*16);										
    return 1;
 }
 
-GLint rglMatrix4Multiply(rglMat4 m1, rglMat4 m2)
+GLint rglMatrix4Multiply(rglMat4_t m1, rglMat4_t m2)
 {
-	rglMat4 dest;
+	rglMat4_t dest;
 	GLint n;
     dest[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
     dest[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
@@ -102,7 +91,7 @@ GLint rglMatrix4Multiply(rglMat4 m1, rglMat4 m2)
 
 
 
-GLint rglMatrix4Minor(rglMat3 dest,rglMat4 src, int n) 
+GLint rglMatrix4Minor(rglMat3_t dest,rglMat4_t src, int n) 
 {
 	
 	int k,r,c=0;
@@ -120,16 +109,16 @@ GLint rglMatrix4Minor(rglMat3 dest,rglMat4 src, int n)
    return 1;
 }
 
-GLfloat rglMatrix4Minorf(rglMat4 src, int n) 
+GLfloat rglMatrix4Minorf(rglMat4_t src, int n) 
 {  		
-   rglMat3 dest;
+   rglMat3_t dest;
    rglMatrix4Minor(dest,src,n);
    return rglMatrix3Det(dest);
 }
 
-GLfloat rglMatrix4Det(rglMat4 src)
+GLfloat rglMatrix4Det(rglMat4_t src)
 {
-	rglMat3 dest;
+	rglMat3_t dest;
 		  rglMatrix4Minor(dest,src,0);
   GLfloat det=src[0]*rglMatrix3Det(dest);
 		  rglMatrix4Minor(dest,src,4);
@@ -141,7 +130,7 @@ GLfloat rglMatrix4Det(rglMat4 src)
   return   det;
 }
 
-GLint rglMatrix4Adjoin(rglMat4 dest, rglMat4 src) 
+GLint rglMatrix4Adjoin(rglMat4_t dest, rglMat4_t src) 
 {
 	
 	int i,j,n;	
@@ -156,7 +145,7 @@ GLint rglMatrix4Adjoin(rglMat4 dest, rglMat4 src)
    return 1;
 }
 
-GLint rglMatrix4Inverse(rglMat4 dest,rglMat4 src)
+GLint rglMatrix4Inverse(rglMat4_t dest,rglMat4_t src)
 {
  
   GLfloat det= rglMatrix4Det(src);
@@ -167,9 +156,9 @@ GLint rglMatrix4Inverse(rglMat4 dest,rglMat4 src)
 }
 
 /*
-rglMat4 rglMatrix4Inverse(rglMat4 src)
+rglMat4_t rglMatrix4Inverse(rglMat4_t src)
  {
-	 rglMat4 m2;
+	 rglMat4_t m2;
     float   det;
     det = src[0] * src[5] * src[10];
     det += src[4] * src[9] * src[2];
@@ -198,7 +187,7 @@ rglMat4 rglMatrix4Inverse(rglMat4 src)
     return m2;
 }
 */
-GLint rglMatrix4Print(rglMat4 m)
+GLint rglMatrix4Print(rglMat4_t m)
 {
 	printf("m[0] = %5.2f m[4] = %5.2f m[8] = %5.2f m[12] = %5.2f\n", m[0],m[4],m[8],m[12]);
 	printf("m[1] = %5.2f m[5] = %5.2f m[9] = %5.2f m[13] = %5.2f\n", m[1],m[5],m[9],m[13]);
