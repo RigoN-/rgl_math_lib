@@ -5,7 +5,7 @@
 
 //vector3-----------------------------------------------------------------------------------------------------------------------------------------------
 GLint rglVector3dInitd(rglVec3d_t *v, GLdouble x, GLdouble y, GLdouble z);
-GLint rglVector3fInitf(rglVec3d_t *v, GLfloat x, GLfloat y, GLfloat z);
+GLint rglVector3fInitf(rglVec3f_t *v, GLfloat x, GLfloat y, GLfloat z);
 GLint rglTexCoord3dInitd(rglTex3d_t *tc, GLdouble s, GLdouble t, GLdouble r);
 GLint rglTexCoord3fInitf(rglTex3f_t *tc, GLfloat s, GLfloat t, GLfloat r);
 GLint rglColor3dInitd(rglCol3d_t *c,GLdouble r, GLdouble g, GLdouble b);
@@ -102,7 +102,7 @@ GLint rglColor3fPrint(rglCol3f_t c);
 
 
 
-
+//---------------experemental
 
 /*
 

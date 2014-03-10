@@ -187,7 +187,7 @@ GLint rglMatrix3dMinor(rglMat2d_t dest,rglMat3d_t src, GLint n)
 		c+=1;
 		}
 	}    						
-   return 1;
+   return 0;
 }
 
 GLint rglMatrix3fMinor(rglMat2f_t dest,rglMat3f_t src, GLint n) 
@@ -205,7 +205,7 @@ GLint rglMatrix3fMinor(rglMat2f_t dest,rglMat3f_t src, GLint n)
 		c+=1;
 		}
 	}    						
-   return 1;
+   return 0;
 }
 
 
@@ -233,7 +233,7 @@ GLint rglMatrix3dAdjoin(rglMat3d_t dest,rglMat3d_t src)
 		else
 		dest[n]=-rglMatrix3dMinord(src,n);
 	}    						
-   return 1;
+   return 0;
 }
 
 GLint rglMatrix3fAdjoin(rglMat3f_t dest,rglMat3f_t src) 
@@ -246,7 +246,7 @@ GLint rglMatrix3fAdjoin(rglMat3f_t dest,rglMat3f_t src)
 		else
 		dest[n]=-rglMatrix3fMinorf(src,n);
 	}    						
-   return 1;
+   return 0;
 }
 //Из этих утверждений следует алгоритм нахождения обратной матрицы:
 //
@@ -263,7 +263,7 @@ GLint rglMatrix3dInverse(rglMat3d_t src)
   rglMatrix3dTranspose(mt);  
   rglMatrix3dMulFloat(mt, 1/det);
   rglMatrix3dCopy(src,mt); 
-  return 1;
+  return 0;
 }
 
 GLint rglMatrix3fInverse(rglMat3f_t src)
@@ -275,14 +275,16 @@ GLint rglMatrix3fInverse(rglMat3f_t src)
   rglMatrix3fTranspose(mt);  
   rglMatrix3fMulFloat(mt, 1/det);
   rglMatrix3fCopy(src,mt); 
-  return 1;
+  return 0;
 }
- /*
- GLint rglMatrix3Inverse(rglMat3_t dest,rglMat3_t src)
+
+//рабочий вариант для теста
+/*
+ GLint rglMatrix3Inverse(rglMat3f_t dest,rglMat3f_t src)
 {
  
-  GLdouble x= rglMatrix3Det(src);
-  if (x==0) return 0;
+  GLfloat x= rglMatrix3fDet(src);
+  if (x==0) return 1;
 
   dest[0]=(-src[7]*src[5]+src[4]*src[8])/x;
   dest[3]=( src[6]*src[5]-src[3]*src[8])/x;
@@ -294,7 +296,7 @@ GLint rglMatrix3fInverse(rglMat3f_t src)
   dest[5]=( src[3]*src[2]-src[0]*src[5])/x;
   dest[8]=(-src[3]*src[1]+src[0]*src[4])/x;
 
-  return 1;
+  return 0;
 }
 */
 
@@ -316,20 +318,24 @@ GLint rglMatrix3fMulVector3f(const rglMat3d_t m, rglVec3d_t *v)
 
 
 
-GLint rglMatrix3dPrint(rglMat3d_t m)
+GLint rglMatrix3dPrint(rglMat3d_t m, const char * header)
 {
+	if (header!=NULL)
+		printf("%s:\n",header);
 	printf("m[0] = %4.8lf m[3] = %4.8lf m[6] = %4.8lf \n", m[0],m[3],m[6]);
 	printf("m[1] = %4.8lf m[4] = %4.8lf m[7] = %4.8lf \n", m[1],m[4],m[7]);
 	printf("m[2] = %4.8lf m[5] = %4.8lf m[8] = %4.8lf \n", m[2],m[5],m[8]);
 	printf("--------------------------------------------------------------------------------------------------\n");
-	return 1;
+	return 0;
 }
 
-GLint rglMatrix3fPrint(rglMat3f_t m)
+GLint rglMatrix3fPrint(rglMat3f_t m, const char * header)
 {
+	if (header!=NULL)
+		printf("%s:\n",header);
 	printf("m[0] = %4.8f m[3] = %4.8f m[6] = %4.8f \n", m[0],m[3],m[6]);
 	printf("m[1] = %4.8f m[4] = %4.8f m[7] = %4.8f \n", m[1],m[4],m[7]);
 	printf("m[2] = %4.8f m[5] = %4.8f m[8] = %4.8f \n", m[2],m[5],m[8]);
 	printf("--------------------------------------------------------------------------------------------------\n");
-	return 1;
+	return 0;
 }

@@ -35,4 +35,7 @@ GLint rglMatrix4fMemPrint(GLuint matrix_type, const char * header);
 GLint rglGetMatrix4dMem(GLuint matrix_type, rglMat4d_t dest);
 GLint rglGetMatrix4fMem(GLuint matrix_type, rglMat4f_t dest);
 
+//------------------experemental
+
+
 #endif

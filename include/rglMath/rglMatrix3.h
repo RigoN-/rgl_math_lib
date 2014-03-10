@@ -47,11 +47,11 @@ GLint rglMatrix3fInverse(rglMat3f_t src);
 GLint rglMatrix3dMulVector3d(const rglMat3d_t m, rglVec3d_t *v);
 GLint rglMatrix3fMulVector3f(const rglMat3d_t m, rglVec3d_t *v);
 
-GLint rglMatrix3dPrint(rglMat3d_t m);
-GLint rglMatrix3fPrint(rglMat3f_t m);
+GLint rglMatrix3dPrint(rglMat3d_t m, const char * header);
+GLint rglMatrix3fPrint(rglMat3f_t m, const char * header);
 
 
-
-
+//--------------------------------------
+//GLint rglMatrix3Inverse(rglMat3f_t dest,rglMat3f_t src);
 
 #endif

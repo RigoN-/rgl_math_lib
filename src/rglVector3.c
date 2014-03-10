@@ -7,7 +7,7 @@ GLint rglVector3dInitd(rglVec3d_t *v, GLdouble x, GLdouble y, GLdouble z)
 	return 0;
 }
 
-GLint rglVector3fInitf(rglVec3d_t *v, GLfloat x, GLfloat y, GLfloat z)
+GLint rglVector3fInitf(rglVec3f_t *v, GLfloat x, GLfloat y, GLfloat z)
 {
 	v->x=x; v->y=y; v->z=z;
 	return 0;

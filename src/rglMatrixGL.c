@@ -8,13 +8,13 @@
 GLint  rglFrustumd(rglMat4d_t dest,GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
 {	
 	   rglMatrix4dInitZero(dest);
-	   dest[0] = (2.0f * zNear / (right - left));    
-       dest[5] = (2.0f * zNear / (top - bottom));
+	   dest[0] = (2.0 * zNear / (right - left));    
+       dest[5] = (2.0 * zNear / (top - bottom));
        dest[8] = ((right + left) / (right - left));
        dest[9] = ((top + bottom) / (top - bottom));
        dest[10] = -((zFar + zNear) / (zFar - zNear));
-       dest[11] = -1.0f;
-       dest[14] = -(2.0f * zFar * zNear / (zFar - zNear));
+       dest[11] = -1.0;
+       dest[14] = -(2.0 * zFar * zNear / (zFar - zNear));
 	return 1;
 	
 }
@@ -37,20 +37,22 @@ GLint  rglFrustumf(rglMat4f_t dest,GLfloat left, GLfloat right, GLfloat bottom, 
 GLint  rglPerspectived(rglMat4d_t dest,GLdouble fov, GLdouble aspect, GLdouble znear, GLdouble zfar)
 {	
 	GLdouble fovr = fov * DEG2RAD;
-	GLdouble ctan = cos(fovr/2.0f)/sin(fovr/2.0f);
+	GLdouble ctan = cos(fovr/2.0)/sin(fovr/2.0);
+	//GLdouble ctan = 1.0/tan(fovr/2.0);
 	rglMatrix4dInitZero(dest);			
 	dest[0]=ctan/aspect;
 	dest[5]=ctan;
 	dest[10]=(znear+zfar)/(znear-zfar);
-	dest[11]=-1.0f;
-	dest[14]=(2.0f*znear*zfar)/(znear-zfar);						
+	dest[11]=-1.0;
+	dest[14]=(2.0*znear*zfar)/(znear-zfar);						
 	return 1;
 }
 
 GLint  rglPerspectivef(rglMat4f_t dest,GLfloat fov, GLfloat aspect, GLfloat znear, GLfloat zfar)
 {	
 	GLfloat fovr = fov * DEG2RAD;
-	GLfloat ctan = cos(fovr/2.0f)/sin(fovr/2.0f);
+	//GLfloat ctan = cos(fovr/2.0f)/sin(fovr/2.0f);
+	GLfloat ctan = 1.0f/tan(fovr/2.0f);
 	rglMatrix4fInitZero(dest);			
 	dest[0]=ctan/aspect;
 	dest[5]=ctan;
@@ -64,13 +66,13 @@ GLint rglOrthod(rglMat4d_t dest, GLdouble left, GLdouble right, GLdouble bottom,
 {	
 	
 	rglMatrix4dInitZero(dest);			
-	dest[0]=2.0f/(right - left);
-	dest[5]=2.0f/(top - bottom);
-	dest[10]=-2.0f/(zfar - znear);
+	dest[0]=2.0/(right - left);
+	dest[5]=2.0/(top - bottom);
+	dest[10]=-2.0/(zfar - znear);
 	dest[12]=-(right + left)/(right - left);
 	dest[13]=-(top+bottom)/(top - bottom);	
 	dest[14]=-(zfar + znear)/(zfar - znear);	
-	dest[15]=1.0f;		
+	dest[15]=1.0;		
 	return 1;
 }
 
@@ -179,19 +181,19 @@ GLint rglRotatef( rglMat4f_t dest, GLfloat angle, GLfloat x, GLfloat y, GLfloat 
 	GLfloat uz = z;
 	
 	GLfloat l = sqrt(ux*ux +uy*uy + uz*uz);
-     if (l != 1.0) 
+     if (l != 1.0f) 
 	 	{ 
 		 ux /= l; uy /= l; uz /= l; 
 		 }	    
-	m[0]  = (1.0-cosA) * (ux*ux) + cosA ;
-	m[1]  = (1.0-cosA) * (ux*uy) + (sinA*uz);
-	m[2]  = (1.0-cosA) * (ux*uz) - (sinA*uy);		
-	m[4]  = (1.0-cosA) * (ux*uy) - (sinA*uz);
-	m[5]  = (1.0-cosA) * (uy*uy) + cosA;
-	m[6]  = (1.0-cosA) * (uy*uz) + (sinA*ux);		
-	m[8]  = (1.0-cosA) * (ux*uz) + (sinA*uy);
-	m[9]  = (1.0-cosA) * (uy*uz) - (sinA*ux);
-	m[10] = (1.0-cosA) * (uz*uz)+ cosA;
+	m[0]  = (1.0f-cosA) * (ux*ux) + cosA ;
+	m[1]  = (1.0f-cosA) * (ux*uy) + (sinA*uz);
+	m[2]  = (1.0f-cosA) * (ux*uz) - (sinA*uy);		
+	m[4]  = (1.0f-cosA) * (ux*uy) - (sinA*uz);
+	m[5]  = (1.0f-cosA) * (uy*uy) + cosA;
+	m[6]  = (1.0f-cosA) * (uy*uz) + (sinA*ux);		
+	m[8]  = (1.0f-cosA) * (ux*uz) + (sinA*uy);
+	m[9]  = (1.0f-cosA) * (uy*uz) - (sinA*ux);
+	m[10] = (1.0f-cosA) * (uz*uz)+ cosA;
 	
 	rglMatrix4fMultiply(dest,m);
 	return 1;	
@@ -236,10 +238,10 @@ GLint rglLookAtf(rglMat4f_t dest, rglVec3f_t v1, rglVec3f_t v2, rglVec3f_t v3)
 	rglVector3fNormalize(&s);
 	rglVector3fCross(&u,s,f);
 	rglVector3fNormalize(&u);
-	m1[0] = s.x; m1[4] = s.y; m1[8] = s.z; m1[12] = 0.0;
-    m1[1] = u.x; m1[5] = u.y; m1[9] = u.z; m1[13] = 0.0;
-    m1[2] = -f.x; m1[6] = -f.y; m1[10] = -f.z; m1[14] = 0.0;
-    m1[3] = 0.0; m1[7] = 0.0; m1[11] = 0.0; m1[15] = 1.0;
+	m1[0] = s.x; m1[4] = s.y; m1[8] = s.z; m1[12] = 0.0f;
+    m1[1] = u.x; m1[5] = u.y; m1[9] = u.z; m1[13] = 0.0f;
+    m1[2] = -f.x; m1[6] = -f.y; m1[10] = -f.z; m1[14] = 0.0f;
+    m1[3] = 0.0f; m1[7] = 0.0; m1[11] = 0.0f; m1[15] = 1.0f;
     rglTranslatef(m1,-v1.x,-v1.y,-v1.z);
     rglMatrix4fMultiply(dest,m1);
 	return 1;

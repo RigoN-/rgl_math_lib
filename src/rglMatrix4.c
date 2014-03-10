@@ -4,10 +4,10 @@
 #include "../include/rglMath/rglVector4.h"
 #include "../include/rglMath/rglVector3.h"
 
-rglMat4_t md_identity4={1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f};
-rglMat4_t mf_identity4={1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f};
-rglMat4_t md_zero4={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-rglMat4_t mf_zero4={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+rglMat4d_t md_identity4={1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0};
+rglMat4f_t mf_identity4={1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f};
+rglMat4d_t md_zero4={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+rglMat4f_t mf_zero4={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 //--------------------------------MATRIX4-----------------------------------------------------------------------------------------------------
 //init value matrix
 GLint rglMatrix4dInitd(rglMat4d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8,GLdouble m9,GLdouble m10,GLdouble m11,GLdouble m12,GLdouble m13,GLdouble m14,GLdouble m15)
@@ -337,7 +337,7 @@ GLint rglMatrix4dInverse(rglMat4d_t src)
 	if (det==0) return 0;
 	rglMatrix4dAdjoin(mt,src);
 	rglMatrix4dTranspose(mt); 
-	rglMatrix4dMulFloat(mt, 1.0f/det);
+	rglMatrix4dMulFloat(mt, 1.0/det);
 	rglMatrix4dCopy(src, mt) ;
 	return 1;
 }

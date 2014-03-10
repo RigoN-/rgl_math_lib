@@ -1,24 +1,33 @@
 rglMatrixGL:
-	rglFrustum
-	rglPerspective
-	rglOrtho
-	rglTranslate
+	+rglFrustumd
+	+rglFrustumf
+	+rglPerspectived
+	+rglPerspectivef
+	+rglOrthod
+	+rglOrthof
+	+rglTranslated
+	+rglTranslatef
 	rglScale
-	rglRotate
-	rglLookAt
-	rglMatrixNormal
-	rglMatrix4MemPrint
-	rglGetMatrix4Mem
+	+rglRotated
+	+rglRotatef
+	+rglLookAtd
+	+rglLookAtf
+	+rglMatrixdNormal
+	+rglMatrixfNormal
+	+rglMatrix4dMemPrint
+	+rglMatrix4fMemPrint
+	+rglGetMatrix4dMem
+	+rglGetMatrix4fMem
 
 rglMatrix4:
 	rglMatrix4Set
-	rglMatrix4Identity
-	rglMatrix4InitZero
+	+rglMatrix4Identity
+	+rglMatrix4InitZero
 	rglMatrix4MulInt
 	rglMatrix4MulFloat
-	rglMatrix4Multiply
-	rglMatrix4to3
-	rglMatrix4Copy
+	+rglMatrix4Multiply
+	+rglMatrix4to3
+	+rglMatrix4Copy
 	rglMatrix4Transpose
 	rglMatrix4Inverse
 	rglMatrix4Print
@@ -32,17 +41,15 @@ rglMatrix3:
 	rglMatrix3Identity
 	rglMatrix3MulInt
 	rglMatrix3MulFloat
-	rglMatrix3Det
-	rglMatrix3Copy
-	//rglMatrix3MulVector2
-	//rglMatrix3MulVector3
-	rglMatrix3Inverse
-	rglMatrix3Transpose
-	rglMatrix3Print
+	+rglMatrix3Det
+	+rglMatrix3Copy
+	+rglMatrix3Inverse
+	+rglMatrix3Transpose
+	+rglMatrix3Print
 	rglMatrix3Multiply
-	rglMatrix3Minor
-	rglMatrix3Minorf
-	rglMatrix3Adjoin
+	+rglMatrix3Minor
+	+rglMatrix3Minorf
+	+rglMatrix3Adjoin
 
 rglMatrix2:
 	rglMatrix2Init

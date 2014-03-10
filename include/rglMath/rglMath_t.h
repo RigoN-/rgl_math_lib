@@ -53,8 +53,8 @@ typedef double			GLclampd;	/* double precision float in [0,1] */
 #define SQRTPI  1.772453850905516027298167
 
 
-#define DEG2RAD (PI / 180.0000000)
-#define RAD2DEG (180.0000000 / PI)
+#define DEG2RAD (PI / 180.0)
+#define RAD2DEG (180.0 / PI)
 
 
 //standart type---------------------------------------------------
