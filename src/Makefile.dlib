@@ -3,8 +3,8 @@ AR = ar
 C_STD= gnu99
 STD = -std=$(C_STD)
 name = librglMath
-TARGET = ../lib/$(name).so
-INCS =  -I"../extrn_include/"
+TARGET = ../lib//linux/$(name).so
+INCS =  -I"../include/rglMath/"
 D_LIB = -fPIC
 CFLAGS = $(INCS) $(D_LIB) -Wall -O2 -msse -msse2 -mfpmath=sse
 LIBS = -lm

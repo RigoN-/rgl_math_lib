@@ -1,107 +1,239 @@
-#include "../include/rglVector3.h" 
-#include "../include/rglVector4.h" 
+#include "../include/rglMath/rglVector3.h" 
+#include "../include/rglMath/rglVector4.h" 
 
 
 //vector operation vec4------------------------------------------------------------------------------------------------------------------
- rglVec4_t rglVector4Set(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+GLint rglVector4dCopy( rglVec4d_t *dest, rglVec4d_t src)
 {
-	 rglVec4_t v={x,y,z,w};
-	return v;
+   dest->x = src.x; dest->y = src.y; dest->z = src.z; dest->w = src.w;
+   return 0;
 }
 
-rglCol4_t rglColor4Set(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+GLint rglVector4fCopy( rglVec4f_t *dest, rglVec4f_t src)
 {
-	 rglCol4_t v={r,g,b,a};
-	return v;
+   dest->x = src.x; dest->y = src.y; dest->z = src.z; dest->w = src.w;
+   return 0;
 }
 
-rglCol4_t rglColor3ToColor4(rglCol3_t v1)
+GLint rglVector4dInitd(rglVec4d_t *v,GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	 rglCol4_t v={v1.r,v1.g,v1.b,1.0};
-	return v;
+	v->x=x;v->y=y; v->z=z; v->w=w;
+	return 0;
 }
 
-rglCol3_t rglColor4ToColor3(rglCol4_t v1)
+GLint rglVector4fInitf(rglVec4f_t *v,GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	 rglCol3_t v={v1.r,v1.g,v1.b};
-	return v;
+	v->x=x;v->y=y; v->z=z; v->w=w;
+	return 0;
 }
 
-GLint rglVector4Clear(rglVec4_t v)
+
+GLint rglColor4dInitd(rglCol4d_t *c,GLdouble r, GLdouble g, GLdouble b, GLdouble a)
 {
-	v.x=v.y=v.z=v.w=0.0;
-	return 1;
+	c->r=r;c->g=g;c->b=b; c->a=a;
+	return 0;
 }
 
-GLint rglVector4Copy( rglVec4_t dest, rglVec4_t src)
+GLint rglColor4fInitf(rglCol4f_t *c,GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  dest.x = src.x; dest.y = src.y; dest.z = src.z; dest.w = src.w;
-   return 1;
+	c->r=r;c->g=g;c->b=b; c->a=a;
+	return 0;
 }
 
-rglVec4_t rglVector4Scale(rglVec4_t v, GLfloat scale )
+
+GLint  rglColor3dToColor4(rglCol4d_t *dest, rglCol3d_t src)
 {
- 	rglVec4_t v1={ v.x*scale, v.y*scale,  v.z*scale, v.w*scale};
-    return v1;
+	dest->r=src.r;dest->g=src.g;dest->b=src.b; dest->a=1.0f;
+	return 0;
 }
 
-rglVec4_t rglVector4Add( rglVec4_t v1, rglVec4_t v2)
+GLint  rglColor3fToColor4(rglCol4f_t *dest, rglCol3f_t src)
 {
-	rglVec4_t v={v1.x+v2.x, v1.y+v2.y,  v1.z+v2.z, v1.w+v2.w};
-   return v;
+	dest->r=src.r;dest->g=src.g;dest->b=src.b; dest->a=1.0f;
+	return 0;
 }
 
-rglVec4_t rglVector4Sub( rglVec4_t v1, rglVec4_t v2)
+GLint  rglColor4dToColor3(rglCol3d_t *dest, rglCol4d_t src)
 {
-  rglVec4_t v ={v1.x-v2.x, v1.y-v2.y, v1.z-v2.z, v1.w-v2.w};
-   return v;
+	dest->r=src.r;dest->g=src.g;dest->b=src.b;
+	return 0;
 }
 
-GLfloat rglVector4Dot( rglVec4_t v1, rglVec4_t v2)
+GLint  rglColor4fToColor3(rglCol3f_t *dest, rglCol4f_t src)
+{
+	dest->r=src.r;dest->g=src.g;dest->b=src.b;
+	return 0;
+}
+
+GLint rglVector4dClear(rglVec4d_t *v)
+{
+	v->x=v->y=v->z=v->w=0.0;
+	return 0;
+}
+
+GLint rglVector4fClear(rglVec4f_t *v)
+{
+	v->x=v->y=v->z=v->w=0.0;
+	return 0;
+}
+
+
+GLint  rglVector4dScale(rglVec4d_t *v, GLdouble scale )
+{
+ 	v->x*=scale; v->y*=scale;  v->z*=scale; v->w*=scale; 	
+    return 0;
+}
+
+GLint  rglVector4fScale(rglVec4f_t *v, GLfloat scale )
+{
+ 	v->x*=scale; v->y*=scale;  v->z*=scale; v->w*=scale;
+    return 0;
+}
+
+
+GLint rglVector4dAdd( rglVec4d_t *v1, rglVec4d_t v2)
+{
+	v1->x+=v2.x; v1->y+=v2.y;  v1->z+=v2.z; v1->w+=v2.w;
+	return 0;
+}
+
+GLint rglVector4fAdd( rglVec4f_t *v1, rglVec4f_t v2)
+{
+	v1->x+=v2.x; v1->y+=v2.y;  v1->z+=v2.z; v1->w+=v2.w;
+	return 0;
+}
+
+
+GLint rglVector4dSub( rglVec4d_t *v1, rglVec4d_t v2)
+{
+	v1->x-=v2.x; v1->y-=v2.y;  v1->z-=v2.z; v1->w-=v2.w;
+	return 0;
+}
+
+GLint rglVector4fSub( rglVec4f_t *v1, rglVec4f_t v2)
+{
+	v1->x-=v2.x; v1->y-=v2.y;  v1->z-=v2.z; v1->w-=v2.w;
+	return 0;
+}
+
+
+GLdouble rglVector4dDot( rglVec4d_t v1, rglVec4d_t v2)
 {
   return  v1.x*v2.x+ v1.y*v2.y+ v1.z*v2.z+ v1.w*v2.w;   
 }
 
-GLfloat rglVector4Length(rglVec4_t v)
+GLdouble rglVector4fDot( rglVec4f_t v1, rglVec4f_t v2)
+{
+  return  v1.x*v2.x+ v1.y*v2.y+ v1.z*v2.z+ v1.w*v2.w;   
+}
+
+GLdouble rglVector4dLength(rglVec4d_t v)
 {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z+v.w * v.w);
 }
 
-rglVec4_t rglVector4Normalize(rglVec4_t v1)
+GLdouble rglVector4fLength(rglVec4f_t v)
 {
-   GLfloat length,ilength;
-    rglVec4_t v;  
-	length=rglVector4Length(v1);
+    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z+v.w * v.w);
+}
+
+GLint rglVector4dNormalize(rglVec4d_t *v1)
+{
+    
+    GLdouble length,ilength;   
+	length=rglVector4dLength(*v1);
     if(length == 0) {
-        rglVector4Clear(v);
-        return v;
+        rglVector4dClear(v1);       
     }
 	else
 	{
-    ilength = 1.0 / length;
-    v=rglVector4Scale(v1,ilength);
-    return v;
-	}
+		ilength = 1.0 / length;
+		rglVector4dScale(v1,ilength);		
+	}    
+	return 0;
 }
 
-GLint rglVector4Print(rglVec4_t v)
-{   
-	printf("v.x = %5.2f , v.y = %5.2f, v.z = %5.2f,  v.w = %5.2f\n", v.x, v.y,v.z,v.w);
-    return 1;
+GLint rglVector4fNormalize(rglVec4f_t *v1)
+{
+   
+    GLfloat length,ilength;   
+	length=rglVector4fLength(*v1);
+    if(length == 0) {
+        rglVector4fClear(v1);       
+    }
+	else
+	{
+		ilength = 1.0 / length;
+		rglVector4fScale(v1,ilength);		
+	}    
+	return 0;
 }
 
-GLint rglColor4Print(rglCol4_t c)
-{   
-	printf("c.r = %5.2f , c.g = %5.2f, c.b = %5.2f,  c.a = %5.2f\n", c.r, c.g,c.b,c.a);
-    return 1;
+GLint rglVector4dTo3d(rglVec3d_t *dest, rglVec4d_t src)
+{
+	 dest->x=src.x;dest->y=src.y;dest->z=src.z;
+	return 0;
 }
 
-rglVec4_t rglMatrix4MulVector4(const rglMat4_t m, rglVec4_t v3)
-{   
-	rglVec4_t v;    
-    v.x = v3.x * m[0] + v3.y * m[4] + v3.z * m[8] + v3.w *m[12];
-    v.y = v3.x * m[1] + v3.y * m[5] + v3.z * m[9] + v3.w *m[13];
-    v.z = v3.x * m[2] + v3.y * m[6] + v3.z * m[10] + v3.w *m[14];
-	v.w = v3.x * m[3] + v3.y * m[7] + v3.z * m[11] + v3.w *m[15];
-    return v;
+GLint rglVector4fTo3f(rglVec3f_t *dest, rglVec4f_t src)
+{
+	 dest->x=src.x;dest->y=src.y;dest->z=src.z;
+	return 0;
 }
+
+GLint rglVector3dTo4d(rglVec4d_t *dest, rglVec3d_t src)
+{
+	dest->x=src.x;dest->y=src.y;dest->z=src.z; dest->w=1.0f ;
+	return 0;
+}
+
+GLint rglVector3fTo4f(rglVec4f_t *dest, rglVec3f_t src)
+{
+	dest->x=src.x;dest->y=src.y;dest->z=src.z; dest->w=1.0f ;
+	return 0;
+}
+
+
+//сравнение векторов
+GLint rglVector4dCmp(rglVec4d_t v1, rglVec4d_t v2)
+{
+    if ((fabs(v1.x-v1.x)<EPS) && (fabs(v1.y-v1.y)<EPS) && (fabs(v1.z-v1.z)<EPS) && (fabs(v1.w-v1.w)<EPS))
+    	return 1;
+    else
+		return 0;	
+}
+
+GLint rglVector4fCmp(rglVec4f_t v1, rglVec4f_t v2)
+{
+    if ((fabs(v1.x-v1.x)<EPS) && (fabs(v1.y-v1.y)<EPS) && (fabs(v1.z-v1.z)<EPS) && (fabs(v1.w-v1.w)<EPS))
+    	return 1;
+    else
+		return 0;	
+}
+
+
+GLint rglVector4dPrint(rglVec4d_t v)
+{   
+	printf("v.x = %4.8lf , v.y = %4.8lf, v.z = %4.8lf,  v.w = %4.8lf\n", v.x, v.y,v.z,v.w);
+    return 0;
+}
+
+GLint rglVector4fPrint(rglVec4f_t v)
+{   
+	printf("v.x = %4.8f , v.y = %4.8f, v.z = %4.8f,  v.w = %4.8f\n", v.x, v.y,v.z,v.w);
+    return 0;
+}
+
+GLint rglColor4dPrint(rglCol4d_t c)
+{   
+	printf("c.r = %4.8lf , c.g = %4.8lf, c.b = %4.8lf,  c.a = %4.8lf\n", c.r, c.g, c.b, c.a);
+    return 0;
+}
+
+GLint rglColor4fPrint(rglCol4f_t c)
+{   
+	printf("c.r = %4.8f , c.g = %4.8f, c.b = %4.8f,  c.a = %4.8f\n", c.r, c.g, c.b, c.a);
+    return 0;
+}
+
+

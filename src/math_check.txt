@@ -1,11 +1,55 @@
-rglPerspective +
-rglOrtho +
-rglFrustum +
+rglMatrixGL:
+	rglFrustum
+	rglPerspective
+	rglOrtho
+	rglTranslate
+	rglScale
+	rglRotate
+	rglLookAt
+	rglMatrixNormal
+	rglMatrix4MemPrint
+	rglGetMatrix4Mem
+
+rglMatrix4:
+	rglMatrix4Set
+	rglMatrix4Identity
+	rglMatrix4InitZero
+	rglMatrix4MulInt
+	rglMatrix4MulFloat
+	rglMatrix4Multiply
+	rglMatrix4to3
+	rglMatrix4Copy
+	rglMatrix4Transpose
+	rglMatrix4Inverse
+	rglMatrix4Print
+	rglMatrix4Minor
+	rglMatrix4Minorf
+	rglMatrix4Adjoin
 
 
-rglMatrix4Multiply+
+rglMatrix3:
+	rglMatrix3Initf
+	rglMatrix3Identity
+	rglMatrix3MulInt
+	rglMatrix3MulFloat
+	rglMatrix3Det
+	rglMatrix3Copy
+	//rglMatrix3MulVector2
+	//rglMatrix3MulVector3
+	rglMatrix3Inverse
+	rglMatrix3Transpose
+	rglMatrix3Print
+	rglMatrix3Multiply
+	rglMatrix3Minor
+	rglMatrix3Minorf
+	rglMatrix3Adjoin
 
-rglTranslate+
-rglScale+
-rglRotate+
-rglLookAT+
+rglMatrix2:
+	rglMatrix2Init
+	rglMatrix2Identity
+	rglMatrix2Copy
+	rglMatrix2Det
+	rglMatrix2Transpose
+	rglMatrix2Multiply
+
+

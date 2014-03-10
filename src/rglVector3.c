@@ -1,281 +1,487 @@
-#include "../include/rglVector3.h" 
+#include "../include/rglMath/rglVector3.h" 
 
 //vector operation vec3-------------------------------------------------------------------------------------------------------------------
-GLint rglVector3Set(rglVec3_t *v, GLfloat x, GLfloat y, GLfloat z)
+GLint rglVector3dInitd(rglVec3d_t *v, GLdouble x, GLdouble y, GLdouble z)
 {
 	v->x=x; v->y=y; v->z=z;
 	return 0;
 }
 
-GLint rglTexCoord3Set(rglTex3_t *v, GLfloat s, GLfloat t, GLfloat r)
+GLint rglVector3fInitf(rglVec3d_t *v, GLfloat x, GLfloat y, GLfloat z)
 {
-	v->s=s; v->t=t; v->r=r;
+	v->x=x; v->y=y; v->z=z;
 	return 0;
 }
 
-GLint rglColor3Set(rglCol3_t *v, GLfloat r, GLfloat g, GLfloat b)
+GLint rglTexCoord3dInitd(rglTex3d_t *tc, GLdouble s, GLdouble t, GLdouble r)
 {
-	v->r=r; v->g=g; v->b=b;
+	tc->s=s; tc->t=t; tc->r=r;
+	return 0;
+}
+GLint rglTexCoord3fInitf(rglTex3f_t *tc, GLfloat s, GLfloat t, GLfloat r)
+{
+	tc->s=s; tc->t=t; tc->r=r;
 	return 0;
 }
 
-GLint rglVector3Clear(rglVec3_t *v)
+
+GLint rglColor3dInitd(rglCol3d_t *c,GLdouble r, GLdouble g, GLdouble b)
+{
+	c->r=r;c->g=g;c->b=b; 
+	return 0;
+}
+
+GLint rglColor3fInitf(rglCol3f_t *c,GLfloat r, GLfloat g, GLfloat b)
+{
+	c->r=r;c->g=g;c->b=b;
+	return 0;
+}
+
+GLint rglVector3dClear(rglVec3d_t *v)
+{
+	v->x=v->y=v->z=0.0;
+	return 0;
+}
+GLint rglVector3fClear(rglVec3f_t *v)
 {
 	v->x=v->y=v->z=0.0;
 	return 0;
 }
 
-GLint rglTexCoord3Clear(rglTex3_t *v)
+GLint rglTexCoord3dClear(rglTex3d_t *tc)
 {
-	v->s=v->t=v->r=0.0;
+	tc->s=tc->t=tc->r=0.0;
+	return 0;
+}
+GLint rglTexCoord3fClear(rglTex3f_t *tc)
+{
+	tc->s=tc->t=tc->r=0.0;
 	return 0;
 }
 
-GLint rglColor3Clear(rglCol3_t *v)
+
+GLint rglColor3dClear(rglCol3d_t *c)
 {
-	v->r=v->g=v->b=0.0;
+	c->r=c->g=c->b=0.0;
 	return 0;
 }
 
-GLint rglVector3Copy(rglVec3_t *dest, rglVec3_t src)
+GLint rglColor3fClear(rglCol3f_t *c)
+{
+	c->r=c->g=c->b=0.0;
+	return 0;
+}
+
+
+GLint rglVector3dCopy(rglVec3d_t *dest, rglVec3d_t src)
 {
 	 dest->x = src.x; dest->y = src.y; dest->z = src.z;
 	return 0;
 }
-GLint rglTexCoord3Copy(rglTex3_t *dest, rglTex3_t src)
+
+GLint rglVector3fCopy(rglVec3f_t *dest, rglVec3f_t src)
+{
+	 dest->x = src.x; dest->y = src.y; dest->z = src.z;
+	return 0;
+}
+
+GLint rglTexCoord3dCopy(rglTex3d_t *dest, rglTex3d_t src)
 {
 	 dest->s = src.s; dest->t = src.t; dest->r = src.r;
 	return 0;
 }
-GLint rglColor3Copy(rglCol3_t *dest, rglCol3_t src)
+
+GLint rglTexCoord3fCopy(rglTex3f_t *dest, rglTex3f_t src)
+{
+	 dest->s = src.s; dest->t = src.t; dest->r = src.r;
+	return 0;
+}
+
+GLint rglColor3dCopy(rglCol3d_t *dest, rglCol3d_t src)
 {
 	dest->r = src.r; dest->g = src.g; dest->b = src.b;
 	return 0;
 }
 
-GLint rglVector3Scale(rglVec3_t *v, GLfloat scale )
+GLint rglColor3fCopy(rglCol3f_t *dest, rglCol3f_t src)
+{
+	dest->r = src.r; dest->g = src.g; dest->b = src.b;
+	return 0;
+}
+
+GLint rglVector3dScale(rglVec3d_t *v, GLdouble scale )
 {
 	 v->x *= scale; v->y *= scale; v->z *= scale;
 	 return 0;
 }
-GLint rglTexCoord3Scale(rglTex3_t *v, GLfloat scale )
-{
-	v->s *= scale; v->t *= scale; v->r *= scale;
-	return 0;
-}
 
-GLint rglColor3Scale(rglCol3_t *v, GLfloat scale )
+GLint rglVector3fScale(rglVec3f_t *v, GLfloat scale )
 {
-	v->r *= scale; v->g *= scale; v->b *= scale;
-	return 0;
+	 v->x *= scale; v->y *= scale; v->z *= scale;
+	 return 0;
 }
 
 
-GLint rglVector3Add(rglVec3_t *v1, rglVec3_t v2)
+GLint rglTexCoord3dScale(rglTex3d_t *tc, GLdouble scale )
+{
+	tc->s *= scale; tc->t *= scale; tc->r *= scale;
+	return 0;
+}
+
+GLint rglTexCoord3fScale(rglTex3f_t *tc, GLfloat scale )
+{
+	tc->s *= scale; tc->t *= scale; tc->r *= scale;
+	return 0;
+}
+
+GLint rglColor3dScale(rglCol3d_t *c, GLdouble scale )
+{
+	c->r *= scale; c->g *= scale; c->b *= scale;
+	return 0;
+}
+
+GLint rglColor3fScale(rglCol3f_t *c, GLfloat scale )
+{
+	c->r *= scale; c->g *= scale; c->b *= scale;
+	return 0;
+}
+
+GLint rglVector3dAdd(rglVec3d_t *v1, rglVec3d_t v2)
 {
 	v1->x+=v2.x; v1->y+=v2.y; v1->z+=v2.z;
 	return 0;
 }
-GLint rglTexCoord3Add(rglTex3_t *v1, rglTex3_t v2)
+
+GLint rglVector3fAdd(rglVec3f_t *v1, rglVec3f_t v2)
 {
-	v1->s+=v2.s; v1->t+=v2.t; v1->r+=v2.r;
-	return 0;
-}
-GLint rglColor3Add(rglCol3_t *v1, rglCol3_t v2)
-{
-	v1->r+=v2.r; v1->g+=v2.g; v1->b+=v2.b;
+	v1->x+=v2.x; v1->y+=v2.y; v1->z+=v2.z;
 	return 0;
 }
 
-GLint rglVector3Sub(rglVec3_t *v1, rglVec3_t v2)
+GLint rglTexCoord3dAdd(rglTex3d_t *tc1, rglTex3d_t tc2)
+{
+	tc1->s+=tc2.s; tc1->t+=tc2.t; tc1->r+=tc2.r;
+	return 0;
+}
+
+GLint rglTexCoord3fAdd(rglTex3f_t *tc1, rglTex3f_t tc2)
+{
+	tc1->s+=tc2.s; tc1->t+=tc2.t; tc1->r+=tc2.r;
+	return 0;
+}
+
+GLint rglColor3dAdd(rglCol3d_t *c1, rglCol3d_t c2)
+{
+	c1->r+=c2.r; c1->g+=c2.g; c1->b+=c2.b;
+	return 0;
+}
+
+GLint rglColor3fAdd(rglCol3f_t *c1, rglCol3f_t c2)
+{
+	c1->r+=c2.r; c1->g+=c2.g; c1->b+=c2.b;
+	return 0;
+}
+
+
+GLint rglVector3dSub(rglVec3d_t *v1, rglVec3d_t v2)
 {
 	v1->x-=v2.x; v1->y-=v2.y; v1->z-=v2.z;
 	return 0;
 }
-GLint rglTexCoord3Sub(rglTex3_t *v1, rglTex3_t v2)
+
+GLint rglVector3fSub(rglVec3f_t *v1, rglVec3f_t v2)
 {
-	v1->s-=v2.s; v1->t-=v2.t; v1->r-=v2.r;
-	return 0;
-}
-GLint rglColor3Sub(rglCol3_t *v1, rglCol3_t v2)
-{
-	v1->r=fabs(v1->r-v2.r); v1->g=fabs(v1->g-v2.g); v1->b=fabs(v1->b-v2.b);
-	
+	v1->x-=v2.x; v1->y-=v2.y; v1->z-=v2.z;
 	return 0;
 }
 
-GLfloat rglVector3Dot(rglVec3_t v1, rglVec3_t v2)
+GLint rglTexCoord3dSub(rglTex3d_t *tc1, rglTex3d_t tc2)
+{
+	tc1->s-=tc2.s; tc1->t-=tc2.t; tc1->r-=tc2.r;
+	return 0;
+}
+
+GLint rglTexCoord3fSub(rglTex3f_t *tc1, rglTex3f_t tc2)
+{
+	tc1->s-=tc2.s; tc1->t-=tc2.t; tc1->r-=tc2.r;
+	return 0;
+}
+
+GLint rglColor3dSub(rglCol3d_t *c1, rglCol3d_t c2)
+{
+	c1->r=fabs(c1->r-c2.r); c1->g=fabs(c1->g-c2.g); c1->b=fabs(c1->b-c2.b);	
+	return 0;
+}
+
+GLint rglColor3fSub(rglCol3f_t *c1, rglCol3f_t c2)
+{
+	c1->r=fabs(c1->r-c2.r); c1->g=fabs(c1->g-c2.g); c1->b=fabs(c1->b-c2.b);	
+	return 0;
+}
+
+GLdouble rglVector3dDot(rglVec3d_t v1, rglVec3d_t v2)
 {
   return  v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;   
 }
 
-GLfloat rglTexCoord3Dot(rglTex3_t v1, rglTex3_t v2)
+GLfloat rglVector3fDot(rglVec3f_t v1, rglVec3f_t v2)
 {
-  return  v1.s*v2.s + v1.t*v2.t + v1.r*v2.r;   
+  return  v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;   
 }
 
-float rglColor3Dot(rglCol3_t v1, rglCol3_t v2)
+GLdouble rglTexCoord3dDot(rglTex3d_t tc1, rglTex3d_t tc2)
 {
-  return  v1.r*v2.r + v1.g*v2.g + v1.b*v2.b;   
+  return  tc1.s*tc2.s + tc1.t*tc2.t + tc1.r*tc2.r;   
+}
+
+GLfloat rglTexCoord3fDot(rglTex3f_t tc1, rglTex3f_t tc2)
+{
+  return  tc1.s*tc2.s + tc1.t*tc2.t + tc1.r*tc2.r;   
+}
+
+GLdouble rglColor3Dot(rglCol3_t c1, rglCol3_t c2)
+{
+  return  c1.r*c2.r + c1.g*c2.g + c1.b*c2.b;   
+}
+
+GLfloat rglColor3fDot(rglCol3f_t c1, rglCol3f_t c2)
+{
+  return  c1.r*c2.r + c1.g*c2.g + c1.b*c2.b;   
 }
 
 //косинус угла между векторами
-GLfloat rglVector3Cos(rglVec3_t v1, rglVec3_t v2)
+GLdouble rglVector3dCos(rglVec3d_t v1, rglVec3d_t v2)
 {
-    return rglVector3Dot(v1,v2)/(rglVector3Length(v1)*rglVector3Length(v2));	
+    return rglVector3dDot(v1,v2)/(rglVector3dLength(v1)*rglVector3dLength(v2));	
+}
+
+GLfloat rglVector3fCos(rglVec3f_t v1, rglVec3f_t v2)
+{
+    return rglVector3fDot(v1,v2)/(rglVector3fLength(v1)*rglVector3fLength(v2));	
 }
 
 //угл между векторами
 //D - градусы
 //R - радианы
-GLfloat rglVector3AngleD(rglVec3_t v1, rglVec3_t v2)
+GLdouble rglVector3dAngleD(rglVec3d_t v1, rglVec3d_t v2)
 {
-    return acos(rglVector3Cos(v1,v2))*RAD2DEG;	
+    return acos(rglVector3dCos(v1,v2))*RAD2DEG;	
 }
 
-GLfloat rglVector3AngleR(rglVec3_t v1, rglVec3_t v2)
+GLfloat rglVector3fAngleD(rglVec3f_t v1, rglVec3f_t v2)
 {
-    return acos(rglVector3Cos(v1,v2));	
+    return acos(rglVector3fCos(v1,v2))*RAD2DEG;	
 }
 
-
-GLint rglMatrix4MulVector3(const rglMat4_t m, rglVec3_t *v)
-{   
-	   
-    v->x =  v->x * m[0] + v->y * m[4] + v->z * m[8] + m[12];
-    v->y =  v->x * m[1] + v->y * m[5] + v->z * m[9] + m[13];
-    v->z =  v->x * m[2] + v->y * m[6] + v->z * m[10] + m[14];
-    return 0;
+GLdouble rglVector3dAngleR(rglVec3d_t v1, rglVec3d_t v2)
+{
+    return acos(rglVector3dCos(v1,v2));	
 }
 
-GLint rglMatrix3MulVector3(const rglMat3_t m, rglVec3_t *v)
-{   
-	    
-    v->x =  v->x * m[0] + v->y * m[3] + v->z * m[6] ;
-    v->y =  v->x * m[1] + v->y * m[4] + v->z * m[7];
-    v->z =  v->x * m[2] + v->y * m[5] + v->z * m[8] ;
-    return 0;
+GLfloat rglVector3fAngleR(rglVec3f_t v1, rglVec3f_t v2)
+{
+    return acos(rglVector3fCos(v1,v2));	
 }
 
-
-
-
-
-
-GLint rglVector3Cross(rglVec3_t *res, rglVec3_t v1, rglVec3_t v2)
+GLint rglVector3dCross(rglVec3d_t *res, rglVec3d_t v1, rglVec3d_t v2)
 {
 	res->x=v1.y * v2.z - v1.z * v2.y;
 	res->y=v1.z * v2.x - v1.x * v2.z;
-	res->z=v1.x * v2.y - v1.y * v2.x;
-	
+	res->z=v1.x * v2.y - v1.y * v2.x;	
 	return 0;
 }
 
-GLfloat rglVector3Length(rglVec3_t v)
+GLint rglVector3fCross(rglVec3f_t *res, rglVec3f_t v1, rglVec3f_t v2)
+{
+	res->x=v1.y * v2.z - v1.z * v2.y;
+	res->y=v1.z * v2.x - v1.x * v2.z;
+	res->z=v1.x * v2.y - v1.y * v2.x;	
+	return 0;
+}
+
+GLdouble rglVector3dLength(rglVec3d_t v)
 {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-GLfloat rglTexCoord3Length(rglTex3_t v)
+GLfloat rglVector3fLength(rglVec3f_t v)
 {
-    return sqrt(v.s * v.s + v.t * v.t + v.r * v.r);
+    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-GLfloat rglColor3Length(rglCol3_t v)
+GLdouble rglTexCoord3dLength(rglTex3d_t tc)
 {
-    return sqrt(v.r * v.r + v.g * v.g + v.b * v.b);
+    return sqrt(tc.s * tc.s + tc.t * tc.t + tc.r * tc.r);
 }
 
-
-GLint rglVector3Normalize(rglVec3_t *v)
+GLfloat rglTexCoord3fLength(rglTex3f_t tc)
 {
-   GLfloat length,ilength;
+    return sqrt(tc.s * tc.s + tc.t * tc.t + tc.r * tc.r);
+}
+
+GLdouble rglColor3dLength(rglCol3d_t c)
+{
+    return sqrt(c.r * c.r + c.g * c.g + c.b * c.b);
+}
+
+GLfloat rglColor3fLength(rglCol3f_t c)
+{
+    return sqrt(c.r * c.r + c.g * c.g + c.b * c.b);
+}
+
+GLint rglVector3dNormalize(rglVec3d_t *v)
+{
+   GLdouble length,ilength;
      
-	length=rglVector3Length(*v);
+	length=rglVector3dLength(*v);
     if(length == 0) {
-        rglVector3Clear(v);
+        rglVector3dClear(v);
         return 0;
     }
 	else
 	{
     ilength = 1.0 / length;
-    rglVector3Scale(v,ilength);
+    rglVector3dScale(v,ilength);
     return 0;
 	}
 }
 
-GLint rglTexCoord3Normalize(rglTex3_t *v)
+GLint rglVector3fNormalize(rglVec3f_t *v)
 {
    GLfloat length,ilength;
      
-	length=rglTexCoord3Length(*v);
+	length=rglVector3fLength(*v);
     if(length == 0) {
-        rglTexCoord3Clear(v);
+        rglVector3fClear(v);
         return 0;
     }
 	else
 	{
     ilength = 1.0 / length;
-    rglTexCoord3Scale(v,ilength);
+    rglVector3fScale(v,ilength);
     return 0;
 	}
 }
 
-GLint rglColor3Normalize(rglCol3_t *v)
+
+GLint rglTexCoord3dNormalize(rglTex3d_t *tc)
 {
-   GLfloat length,ilength;
+   GLdouble length,ilength;
      
-	length=rglColor3Length(*v);
+	length=rglTexCoord3dLength(*tc);
     if(length == 0) {
-        rglColor3Clear(v);
+        rglTexCoord3dClear(tc);
         return 0;
     }
 	else
 	{
     ilength = 1.0 / length;
-    rglColor3Scale(v,ilength);
+    rglTexCoord3dScale(tc,ilength);
     return 0;
 	}
 }
 
-GLint rglVec4ToVec3(rglVec3_t *v3, rglVec4_t v4)
+GLint rglTexCoord3fNormalize(rglTex3f_t *tc)
 {
-	 v3->x=v4.x;v3->y=v4.y;v3->z=v4.z;
-	return 0;
-}
-	
-GLint rglCol4ToCol3(rglCol3_t *c3, rglCol4_t c4)
-{
-	 c3->r=c4.r;c3->g=c4.g;c3->b=c4.b;
-	return 0;
+   GLdouble length,ilength;
+     
+	length=rglTexCoord3fLength(*tc);
+    if(length == 0) {
+        rglTexCoord3fClear(tc);
+        return 0;
+    }
+	else
+	{
+    ilength = 1.0 / length;
+    rglTexCoord3fScale(tc,ilength);
+    return 0;
+	}
 }
 
-GLint rglVec3ToCol3(rglCol3_t *c, rglVec3_t v)
+GLint rglColor3dNormalize(rglCol3d_t *c)
+{
+   GLdouble length,ilength;
+     
+	length=rglColor3dLength(*c);
+    if(length == 0) {
+        rglColor3dClear(c);
+        return 0;
+    }
+	else
+	{
+    ilength = 1.0 / length;
+    rglColor3dScale(c,ilength);
+    return 0;
+	}
+}
+
+GLint rglColor3fNormalize(rglCol3f_t *c)
+{
+   GLdouble length,ilength;
+     
+	length=rglColor3fLength(*c);
+    if(length == 0) {
+        rglColor3fClear(c);
+        return 0;
+    }
+	else
+	{
+    ilength = 1.0 / length;
+    rglColor3fScale(c,ilength);
+    return 0;
+	}
+}
+
+GLint rglVector3dToColor3d(rglCol3d_t *c, rglVec3d_t v)
 {
 	 c->r=v.x;c->g=v.y;c->b=v.z;
 	return 0;
 }
 
-GLint rglVec3ToTex3(rglTex3_t *t, rglVec3_t v)
+GLint rglVector3fToColor3f(rglCol3f_t *c, rglVec3f_t v)
 {
-	 t->s=v.x;t->t=v.y;t->r=v.z;
+	 c->r=v.x;c->g=v.y;c->b=v.z;
 	return 0;
 }
 
-GLint rglCol3ToVec3(rglVec3_t *v, rglCol3_t c)
+GLint rglVector3dToTexCoord3d(rglTex3d_t *tc, rglVec3d_t v)
+{
+	 tc->s=v.x;tc->t=v.y;tc->r=v.z;
+	return 0;
+}
+
+GLint rglVector3fToTexCoord3f(rglTex3f_t *tc, rglVec3f_t v)
+{
+	 tc->s=v.x;tc->t=v.y;tc->r=v.z;
+	return 0;
+}
+
+GLint rglColor3dToVector3d(rglVec3d_t *v, rglCol3d_t c)
 {
 	 v->x=c.r;v->y=c.g;v->z=c.b;
 	return 0;
 }
 
-GLint rglTex3ToVec3(rglVec3_t *v, rglTex3_t t)
+GLint rglColor3fToVector3f(rglVec3f_t *v, rglCol3f_t c)
 {
-	  v->x=t.s;v->y=t.t;v->z=t.r;
+	 v->x=c.r;v->y=c.g;v->z=c.b;
+	return 0;
+}
+
+GLint rglTexCoord3dToVector3d(rglVec3d_t *v, rglTex3d_t tc)
+{
+	  v->x=tc.s;v->y=tc.t;v->z=tc.r;
+	return 0;
+}
+
+GLint rglTexCoord3fToVector3f(rglVec3d_t *v, rglTex3d_t tc)
+{
+	  v->x=tc.s;v->y=tc.t;v->z=tc.r;
 	return 0;
 }
 
 //сравнение векторов
-GLint rglVector3Cmp(rglVec3_t v1, rglVec3_t v2)
+GLint rglVector3dCmp(rglVec3d_t v1, rglVec3d_t v2)
 {
     if ((fabs(v1.x-v1.x)<EPS) && (fabs(v1.y-v1.y)<EPS) && (fabs(v1.z-v1.z)<EPS))
     	return 1;
@@ -283,22 +489,47 @@ GLint rglVector3Cmp(rglVec3_t v1, rglVec3_t v2)
 		return 0;	
 }
 
+GLint rglVector3fCmp(rglVec3f_t v1, rglVec3f_t v2)
+{
+    if ((fabs(v1.x-v1.x)<EPS) && (fabs(v1.y-v1.y)<EPS) && (fabs(v1.z-v1.z)<EPS))
+    	return 1;
+    else
+		return 0;	
+}
 
-GLint rglVector3Print(rglVec3_t v)
+GLint rglVector3dPrint(rglVec3d_t v)
 {   
-	printf("v.x = %.2f , v.y = %.2f  v.z = %.2f\n", v.x, v.y, v.z);
+	printf("v.x = %4.8lf , v.y = %4.8lf, v.z = %4.8lf\n", v.x, v.y,v.z);
     return 0;
 }
 
-GLint rglTexCoord3Print(rglTex3_t v)
+GLint rglVector3fPrint(rglVec3f_t v)
 {   
-	printf("v.s = %.2f , v.t = %.2f  v.r = %.2f\n", v.s, v.t, v.r);
+	printf("v.x = %4.8f , v.y = %4.8f, v.z = %4.8f\n", v.x, v.y,v.z);
     return 0;
 }
 
-GLint rglColor3Print(rglCol3_t v)
+GLint rglTexCoord3dPrint(rglTex3d_t tc)
 {   
-	printf("v.r = %.2f , v.g = %.2f  v.b = %.2f\n", v.r, v.g, v.b);
+	printf("tc.s = %4.8lf , tc.t = %4.8lf, tc.r = %4.8lf\n", tc.s, tc.t,tc.r);
+    return 0;
+}
+
+GLint rglTexCoord3fPrint(rglTex3f_t tc)
+{   
+	printf("tc.s = %4.8f , tc.t = %4.8f, tc.r = %4.8f\n", tc.s, tc.t,tc.r);
+    return 0;
+}
+
+GLint rglColor3dPrint(rglCol3d_t c)
+{   
+	printf("c.r = %4.8lf , c.g = %4.8lf, c.b = %4.8lf\n", c.r, c.g, c.b);
+    return 0;
+}
+
+GLint rglColor3fPrint(rglCol3f_t c)
+{   
+	printf("c.r = %4.8f , c.g = %4.8f, c.b = %4.8f\n", c.r, c.g, c.b);
     return 0;
 }
 
