@@ -26,14 +26,14 @@ GLint rglRotatef( rglMat4f_t dest, GLfloat angle, GLfloat x, GLfloat y, GLfloat 
 GLint rglLookAtd(rglMat4d_t dest, rglVec3d_t v1, rglVec3d_t v2, rglVec3d_t v3);
 GLint rglLookAtf(rglMat4f_t dest, rglVec3f_t v1, rglVec3f_t v2, rglVec3f_t v3);
 
-GLint rglMatrixdNormal(rglMat3d_t dest,rglMat4d_t src);
-GLint rglMatrixfNormal(rglMat3f_t dest,rglMat4f_t src);
+GLint rglMatrixNormald(rglMat3d_t dest,rglMat4d_t src);
+GLint rglMatrixNormalf(rglMat3f_t dest,rglMat4f_t src);
 
-GLint rglMatrix4dMemPrint(GLuint matrix_type, const char * header);
-GLint rglMatrix4fMemPrint(GLuint matrix_type, const char * header);
+GLint rglMatrixMemPrint4d(GLuint matrix_type, const char * header);
+GLint rglMatrixMemPrint4f(GLuint matrix_type, const char * header);
 
-GLint rglGetMatrix4dMem(GLuint matrix_type, rglMat4d_t dest);
-GLint rglGetMatrix4fMem(GLuint matrix_type, rglMat4f_t dest);
+GLint rglGetMatrixMem4d(GLuint matrix_type, rglMat4d_t dest);
+GLint rglGetMatrixMem4f(GLuint matrix_type, rglMat4f_t dest);
 
 //------------------experemental
 

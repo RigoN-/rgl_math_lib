@@ -10,7 +10,7 @@ rglMat4d_t md_zero4={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 rglMat4f_t mf_zero4={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 //--------------------------------MATRIX4-----------------------------------------------------------------------------------------------------
 //init value matrix
-GLint rglMatrix4dInitd(rglMat4d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8,GLdouble m9,GLdouble m10,GLdouble m11,GLdouble m12,GLdouble m13,GLdouble m14,GLdouble m15)
+GLint rglMatrixInit4d(rglMat4d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8,GLdouble m9,GLdouble m10,GLdouble m11,GLdouble m12,GLdouble m13,GLdouble m14,GLdouble m15)
 {	
 	dest[0]=m0; dest[4]=m4;	dest[8]=m8;		dest[12]=m12;
 	dest[1]=m1; dest[5]=m5;	dest[9]=m9;		dest[13]=m13;
@@ -19,7 +19,7 @@ GLint rglMatrix4dInitd(rglMat4d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLd
 	return 1;
 }
 
-GLint rglMatrix4fInitf(rglMat4f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8,GLfloat m9,GLfloat m10,GLfloat m11,GLfloat m12,GLfloat m13,GLfloat m14,GLfloat m15)
+GLint rglMatrixInit4f(rglMat4f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8,GLfloat m9,GLfloat m10,GLfloat m11,GLfloat m12,GLfloat m13,GLfloat m14,GLfloat m15)
 {	
 	dest[0]=m0; dest[4]=m4;	dest[8]=m8;		dest[12]=m12;
 	dest[1]=m1; dest[5]=m5;	dest[9]=m9;		dest[13]=m13;
@@ -29,46 +29,45 @@ GLint rglMatrix4fInitf(rglMat4f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloa
 }
 
 //copy matrix from src to dest
-GLint rglMatrix4dCopy(rglMat4d_t dest, rglMat4d_t src) 
+GLint rglMatrixCopy4d(rglMat4d_t dest, rglMat4d_t src) 
 {
 	memcpy(dest, src,sizeof(*dest)*16);										
    return 1;
 }
 
-GLint rglMatrix4fCopy(rglMat4f_t dest, rglMat4f_t src) 
+GLint rglMatrixCopy4f(rglMat4f_t dest, rglMat4f_t src) 
 {
 	memcpy(dest, src,sizeof(*dest)*16);										
    return 1;
 }
 
 //identity matrix
-GLint rglMatrix4dIdentity(rglMat4d_t dest)
+GLint rglMatrixIdentity4d(rglMat4d_t dest)
 {		
 	memcpy(dest, md_identity4,sizeof(*dest)*16);		
 	return 1;
 }
 
-GLint rglMatrix4fIdentity(rglMat4f_t dest)
+GLint rglMatrixIdentity4f(rglMat4f_t dest)
 {		
 	memcpy(dest, mf_identity4,sizeof(*dest)*16);		
 	return 1;
 }
 
 //init zero value matrix
-GLint rglMatrix4dInitZero(rglMat4d_t dest)
+GLint rglMatrixZeroInit4d(rglMat4d_t dest)
 {		
 	memcpy(dest, md_zero4,sizeof(*dest)*16); 	
 	return 1;
 }
 
-GLint rglMatrix4fInitZero(rglMat4f_t dest)
+GLint rglMatrixZeroInit4f(rglMat4f_t dest)
 {		
 	memcpy(dest, mf_zero4,sizeof(*dest)*16); 	
 	return 1;
 }
 
-
-GLint rglMatrix4dto3d(rglMat3d_t dest, rglMat4d_t src)
+GLint rglMatrix4ToMatrix3d(rglMat3d_t dest, rglMat4d_t src)
 {	
  	dest[0] =  src[0];
     dest[1] =  src[1];
@@ -82,7 +81,7 @@ GLint rglMatrix4dto3d(rglMat3d_t dest, rglMat4d_t src)
   return 1;
 }
 
-GLint rglMatrix4fto3f(rglMat3f_t dest, rglMat4f_t src)
+GLint rglMatrix4ToMatrix3f(rglMat3f_t dest, rglMat4f_t src)
 {	
  	dest[0] =  src[0];
     dest[1] =  src[1];
@@ -98,74 +97,74 @@ GLint rglMatrix4fto3f(rglMat3f_t dest, rglMat4f_t src)
 
 
 //multiply matrix on integer value
-GLint rglMatrix4dMulInt(rglMat4d_t src, GLint d)
+GLint rglMatrixMultInt4d(rglMat4d_t src, GLint d)
 {
 	rglMat4d_t mt;
 	GLint i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*d;
-	rglMatrix4dCopy(src,mt);
+	rglMatrixCopy4d(src,mt);
     return 1;
 }
 
-GLint rglMatrix4fMulInt(rglMat4f_t src, GLint d)
+GLint rglMatrixMultInt4f(rglMat4f_t src, GLint d)
 {
 	rglMat4f_t mt;
 	GLint i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*d;
-	rglMatrix4fCopy(src,mt);
+	rglMatrixCopy4f(src,mt);
     return 1;
 }
 
 //multiply matrix on float value
-GLint rglMatrix4dMulFloat(rglMat4d_t src, GLdouble f)
+GLint rglMatrixMultFloat4d(rglMat4d_t src, GLdouble f)
 {
 	
 	rglMat4d_t mt;
 	GLint i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*f;
-	rglMatrix4dCopy(src,mt);
+	rglMatrixCopy4d(src,mt);
 	return 1;
 }
 
-GLint rglMatrix4fMulFloat(rglMat4f_t src, GLfloat f)
+GLint rglMatrixMultFloat4f(rglMat4f_t src, GLfloat f)
 {
 	
 	rglMat4f_t mt;
 	GLint i;
 	for(i=0;i<16;i+=1)
 		mt[i]=src[i]*f;
-	rglMatrix4fCopy(src,mt);
+	rglMatrixCopy4f(src,mt);
 	return 1;
 }
 
 //transponse matrix from src to dest
-GLint rglMatrix4dTranspose(rglMat4d_t src) 
+GLint rglMatrixTranspose4d(rglMat4d_t src) 
 {
    rglMat4d_t mt;
    mt[0] = src[0]; mt[4] = src[1]; mt[8] = src[2]; mt[12] = src[3];
    mt[1] = src[4]; mt[5] = src[5]; mt[9] = src[6]; mt[13] = src[7];
    mt[2] = src[8]; mt[6] = src[9]; mt[10] = src[10]; mt[14] = src[11];
    mt[3] = src[12]; mt[7] = src[13]; mt[11] = src[14]; mt[15] = src[15];
-   rglMatrix4dCopy(src,mt);
+   rglMatrixCopy4d(src,mt);
    return 1;
 }
 
-GLint rglMatrix4fTranspose(rglMat4f_t src) 
+GLint rglMatrixTranspose4f(rglMat4f_t src) 
 {
 	rglMat4f_t mt;
    mt[0] = src[0]; mt[4] = src[1]; mt[8] = src[2]; mt[12] = src[3];
    mt[1] = src[4]; mt[5] = src[5]; mt[9] = src[6]; mt[13] = src[7];
    mt[2] = src[8]; mt[6] = src[9]; mt[10] = src[10]; mt[14] = src[11];
    mt[3] = src[12]; mt[7] = src[13]; mt[11] = src[14]; mt[15] = src[15];
-   rglMatrix4fCopy(src,mt);
+   rglMatrixCopy4f(src,mt);
    return 1;
 }
 
 //multiply matrix m1 on m2
-GLint rglMatrix4dMultiply(rglMat4d_t m1, rglMat4d_t m2)
+GLint rglMatrixMultiply4d(rglMat4d_t m1, rglMat4d_t m2)
 {
 	rglMat4d_t mt;
 	GLint n;
@@ -188,11 +187,11 @@ GLint rglMatrix4dMultiply(rglMat4d_t m1, rglMat4d_t m2)
      for(n=0;n<16;n+=1)
       if(fabs(mt[n])<1e-6)
       	mt[n]=0.0;   
-     rglMatrix4dCopy(m1, mt) ;   
+     rglMatrixCopy4d(m1, mt) ;   
     return 1;	
 }
 
-GLint rglMatrix4fMultiply(rglMat4f_t m1, rglMat4f_t m2)
+GLint rglMatrixMultiply4f(rglMat4f_t m1, rglMat4f_t m2)
 {
 	rglMat4f_t mt;
 	GLint n;
@@ -215,12 +214,12 @@ GLint rglMatrix4fMultiply(rglMat4f_t m1, rglMat4f_t m2)
      for(n=0;n<16;n+=1)
       if(fabs(mt[n])<1e-6)
       	mt[n]=0.0;   
-     rglMatrix4fCopy(m1, mt) ;   
+     rglMatrixCopy4f(m1, mt) ;   
     return 1;	
 }
 
 //minor matrix 3x3 from matrix 4x4
-GLint rglMatrix4dMinor(rglMat3d_t dest,rglMat4d_t src, GLint n) 
+GLint rglMatrixMinor4d(rglMat3d_t dest,rglMat4d_t src, GLint n) 
 {
 	
 	GLint k,r,c=0;
@@ -238,7 +237,7 @@ GLint rglMatrix4dMinor(rglMat3d_t dest,rglMat4d_t src, GLint n)
    return 1;
 }
 
-GLint rglMatrix4fMinor(rglMat3f_t dest,rglMat4f_t src, GLint n) 
+GLint rglMatrixMinor4f(rglMat3f_t dest,rglMat4f_t src, GLint n) 
 {
 	
 	GLint k,r,c=0;
@@ -257,101 +256,90 @@ GLint rglMatrix4fMinor(rglMat3f_t dest,rglMat4f_t src, GLint n)
 }
 
 //determinant minor matrix
-GLdouble rglMatrix4dMinord(rglMat4d_t src, GLint n) 
+GLdouble rglMatrixMinord4d(rglMat4d_t src, GLint n) 
 {  		
    rglMat3d_t mt;
-   rglMatrix4dMinor(mt,src,n);
-   return rglMatrix3dDet(mt);
+   rglMatrixMinor4d(mt,src,n);
+   return rglMatrixDet3d(mt);
 }
 
-GLfloat rglMatrix4fMinorf(rglMat4f_t src, GLint n) 
+GLfloat rglMatrixMinorf4f(rglMat4f_t src, GLint n) 
 {  		
    rglMat3f_t mt;
-   rglMatrix4fMinor(mt,src,n);
-   return rglMatrix3fDet(mt);
+   rglMatrixMinor4f(mt,src,n);
+   return rglMatrixDet3f(mt);
 }
 
 //determinant minor matrix 4x4
-GLdouble rglMatrix4dDet(rglMat4d_t src)
+GLdouble rglMatrixDet4d(rglMat4d_t src)
 {
-	rglMat3d_t mt;
-		  rglMatrix4dMinor(mt,src,0);
-  GLdouble det=src[0]*rglMatrix3dDet(mt);
-		  rglMatrix4dMinor(mt,src,4);
-  		  det-= src[4]*rglMatrix3dDet(mt);
-  		  rglMatrix4dMinor(mt,src,8);	
-  		  det+= src[8]*rglMatrix3dDet(mt);
-  		  rglMatrix4dMinor(mt,src,12);
-  		  det-= src[12]*rglMatrix3dDet(mt);				
+  GLdouble det=src[0]* rglMatrixMinord4d(src,0);		  
+  		   det-= src[4]*rglMatrixMinord4d(src,4);  		 	
+  		   det+= src[8]* rglMatrixMinord4d(src,8);  		 
+  		   det-= src[12]* rglMatrixMinord4d(src,12);			
   return   det;
 }
 
-GLfloat rglMatrix4fDet(rglMat4f_t src)
+GLfloat rglMatrixDet4f(rglMat4f_t src)
 {
-	rglMat3f_t mt;
-		  rglMatrix4fMinor(mt,src,0);
-  GLfloat det=src[0]*rglMatrix3fDet(mt);
-		  rglMatrix4fMinor(mt,src,4);
-  		  det-= src[4]*rglMatrix3fDet(mt);
-  		  rglMatrix4fMinor(mt,src,8);	
-  		  det+= src[8]*rglMatrix3fDet(mt);
-  		  rglMatrix4fMinor(mt,src,12);
-  		  det-= src[12]*rglMatrix3fDet(mt);				
+ GLdouble  det=src[0]* rglMatrixMinorf4f(src,0);		  
+  		   det-= src[4]*rglMatrixMinorf4f(src,4);  		 	
+  		   det+= src[8]* rglMatrixMinorf4f(src,8);  		 
+  		   det-= src[12]* rglMatrixMinorf4f(src,12);				
   return   det;
 }
 
 //adjoin matrix (союзная матрица)
-GLint rglMatrix4dAdjoin(rglMat4d_t dest, rglMat4d_t src) 
+GLint rglMatrixAdjoin4d(rglMat4d_t dest, rglMat4d_t src) 
 {	
 	GLint i,j,n;	
 	for (n=0;n<16;n+=1)
 	{
 		j=n/4; i=n%4;
 		if (j%2!=i%2) 		
-			dest[n]=rglMatrix4dMinord(src,n);			
+			dest[n]=rglMatrixMinord4d(src,n);			
 		else
-			dest[n]=-rglMatrix4dMinord(src,n);
+			dest[n]=-rglMatrixMinord4d(src,n);
 	}    						
    return 1;
 }
 
-GLint rglMatrix4fAdjoin(rglMat4f_t dest, rglMat4f_t src) 
+GLint rglMatrixAdjoin4f(rglMat4f_t dest, rglMat4f_t src) 
 {	
 	GLint i,j,n;	
 	for (n=0;n<16;n+=1)
 	{
 		j=n/4; i=n%4;
 		if (j%2!=i%2) 		
-			dest[n]=rglMatrix4fMinorf(src,n);			
+			dest[n]=rglMatrixMinorf4f(src,n);			
 		else
-			dest[n]=-rglMatrix4fMinorf(src,n);
+			dest[n]=-rglMatrixMinorf4f(src,n);
 	}    						
    return 1;
 }
 
 
-GLint rglMatrix4dInverse(rglMat4d_t src)
+GLint rglMatrixInverse4d(rglMat4d_t src)
 {
 	rglMat4d_t mt;
-	GLdouble det= rglMatrix4dDet(src);
+	GLdouble det= rglMatrixDet4d(src);
 	if (det==0) return 0;
-	rglMatrix4dAdjoin(mt,src);
-	rglMatrix4dTranspose(mt); 
-	rglMatrix4dMulFloat(mt, 1.0/det);
-	rglMatrix4dCopy(src, mt) ;
+	rglMatrixAdjoin4d(mt,src);
+	rglMatrixTranspose4d(mt); 
+	rglMatrixMultFloat4d(mt, 1.0/det);
+	rglMatrixCopy4d(src, mt) ;
 	return 1;
 }
 
 GLint rglMatrix4fInverse(rglMat4f_t src)
-{
- 
+{ 
 	rglMat4f_t mt;
-	GLfloat det= rglMatrix4fDet(src);
+	GLfloat det= rglMatrixDet4f(src);
 	if (det==0) return 0;
-	rglMatrix4fAdjoin(mt,src);
-	rglMatrix4fTranspose(mt); 
-	rglMatrix4fMulFloat(mt, 1.0f/det);
-	rglMatrix4fCopy(src, mt) ;
+	rglMatrixAdjoin4f(mt,src);
+	rglMatrixTranspose4f(mt); 
+	rglMatrixMultFloat4f(mt, 1.0f/det);
+	rglMatrixCopy4f(src, mt) ;
 	return 1;
 }
 
@@ -388,7 +376,7 @@ rglMat4_t rglMatrix4Inverse(rglMat4_t src)
 }
 */
 //multiply matrix 4x4 on vector 4
-GLint rglMatrix4dMulVector4d(const rglMat4d_t m, rglVec4d_t *v)
+GLint rglMatrixMultVector4d(const rglMat4d_t m, rglVec4d_t *v)
 {   
 	 
     v->x = v->x * m[0] + v->y * m[4] + v->z * m[8] + v->w *m[12];
@@ -399,9 +387,9 @@ GLint rglMatrix4dMulVector4d(const rglMat4d_t m, rglVec4d_t *v)
     return 0;
 }
 
-GLint rglMatrix4fMulVector4f(const rglMat4f_t m, rglVec4f_t *v)
+GLint rglMatrixMultVector4f(const rglMat4f_t m, rglVec4f_t *v)
 {   
-	   
+	 
     v->x = v->x * m[0] + v->y * m[4] + v->z * m[8] + v->w *m[12];
     v->y = v->x * m[1] + v->y * m[5] + v->z * m[9] + v->w *m[13];
     v->z = v->x * m[2] + v->y * m[6] + v->z * m[10] + v->w *m[14];
@@ -410,26 +398,28 @@ GLint rglMatrix4fMulVector4f(const rglMat4f_t m, rglVec4f_t *v)
     return 0;
 }
 
-GLint rglMatrix4dMulVector3d(const rglMat4d_t m, rglVec3d_t *v)
-{  	   
-    v->x =  v->x * m[0] + v->y * m[4] + v->z * m[8] + m[12];
-    v->y =  v->x * m[1] + v->y * m[5] + v->z * m[9] + m[13];
-    v->z =  v->x * m[2] + v->y * m[6] + v->z * m[10] + m[14];
+
+GLint rglMatrix4MultVector3d(const rglMat4d_t m, rglVec3d_t *v)
+{   
+	rglVec4d_t v4;
+	rglVector3ToVector4d(&v4,*v) ;
+    rglMatrixMultVector4d(m, &v4);
+    rglVector4ToVector3d(v,v4);	
     return 0;
 }
 
+
 GLint rglMatrix4fMulVector3f(const rglMat4f_t m, rglVec3f_t *v)
 {  	   
-    v->x =  v->x * m[0] + v->y * m[4] + v->z * m[8] + m[12];
-    v->y =  v->x * m[1] + v->y * m[5] + v->z * m[9] + m[13];
-    v->z =  v->x * m[2] + v->y * m[6] + v->z * m[10] + m[14];
+	rglVec4f_t v4;
+	rglVector3ToVector4f(&v4,*v) ;
+    rglMatrixMultVector4f(m, &v4);
+    rglVector4ToVector3f(v,v4);	
     return 0;
 }	
 
 
-
-
-GLint rglMatrix4dPrint(rglMat4d_t m,const char * header)
+GLint rglMatrixPrint4d(rglMat4d_t m,const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);
@@ -441,7 +431,7 @@ GLint rglMatrix4dPrint(rglMat4d_t m,const char * header)
 	return 1;
 }
 
-GLint rglMatrix4fPrint(rglMat4f_t  m,const char * header)
+GLint rglMatrixPrint4f(rglMat4f_t  m,const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);

@@ -3,57 +3,41 @@
 
 #include "rglMath_t.h"
 
-
 //vector4
-GLint rglVector4dCopy( rglVec4d_t *dest, rglVec4d_t src);
-GLint rglVector4fCopy( rglVec4f_t *dest, rglVec4f_t src);
-
-GLint rglVector4dInitd(rglVec4d_t *v,GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-GLint rglVector4fInitf(rglVec4f_t *v,GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-
-GLint rglVector4dClear(rglVec4d_t *v);
-GLint rglVector4fClear(rglVec4f_t *v);
-
-GLint  rglVector4dScale(rglVec4d_t *v, GLdouble scale );
-GLint  rglVector4fScale(rglVec4f_t *v, GLfloat scale );
-
-GLint rglVector4dAdd( rglVec4d_t *v1, rglVec4d_t v2);
-GLint rglVector4fAdd( rglVec4f_t *v1, rglVec4f_t v2);
-
-GLint rglVector4dSub( rglVec4d_t *v1, rglVec4d_t v2);
-GLint rglVector4fSub( rglVec4f_t *v1, rglVec4f_t v2);
-
-GLdouble rglVector4dDot( rglVec4d_t v1, rglVec4d_t v2);
-GLdouble rglVector4fDot( rglVec4f_t v1, rglVec4f_t v2);
-
-GLdouble rglVector4dLength(rglVec4d_t v);
-GLdouble rglVector4fLength(rglVec4f_t v);
-
-GLint rglVector4dNormalize(rglVec4d_t *v1);
-GLint rglVector4fNormalize(rglVec4f_t *v1);
-
-GLint rglVector4dPrint(rglVec4d_t v);
-GLint rglVector4fPrint(rglVec4f_t v);
-
-GLint rglColor4dInitd(rglCol4d_t *v,GLdouble r, GLdouble g, GLdouble b, GLdouble a);
-GLint rglColor4fInitf(rglCol4f_t *v,GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
-GLint  rglColor3dToColor4(rglCol4d_t *dest, rglCol3d_t src);
-GLint  rglColor3fToColor4(rglCol4f_t *dest, rglCol3f_t src);
-
-GLint  rglColor4dToColor3(rglCol3d_t *dest, rglCol4d_t src);
-GLint  rglColor4fToColor3(rglCol3f_t *dest, rglCol4f_t src);
-
-GLint rglVector4dTo3d(rglVec3d_t *dest, rglVec4d_t src);
-GLint rglVector4fTo3f(rglVec3f_t *v3, rglVec4f_t v4);
-GLint rglVector3dTo4d(rglVec4d_t *dest, rglVec3d_t src);
-GLint rglVector3fTo4f(rglVec4f_t *dest, rglVec3f_t src);
-
-GLint rglVector4dCmp(rglVec4d_t v1, rglVec4d_t v2);
-GLint rglVector4fCmp(rglVec4f_t v1, rglVec4f_t v2);
-
-GLint rglColor4dPrint(rglCol4d_t c);
-GLint rglColor4fPrint(rglCol4f_t v);
+GLint rglVectorInitd(rglVec4d_t *v,GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+GLint rglVectorInitf(rglVec4f_t *v,GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+GLint rglColorInitd(rglCol4d_t *c,GLdouble r, GLdouble g, GLdouble b, GLdouble a);
+GLint rglColorInitf(rglCol4f_t *c,GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+GLint rglVectorCopy4d( rglVec4d_t *dest, rglVec4d_t src);
+GLint rglVectorCopy4f( rglVec4f_t *dest, rglVec4f_t src);
+GLint  rglColor3ToColor4d(rglCol4d_t *dest, rglCol3d_t src);
+GLint  rglColor3ToColor4f(rglCol4f_t *dest, rglCol3f_t src);
+GLint  rglColor4ToColor3d(rglCol3d_t *dest, rglCol4d_t src);
+GLint  rglColor4ToColor3f(rglCol3f_t *dest, rglCol4f_t src);
+GLint rglVectorClear4d(rglVec4d_t *v);
+GLint rglVectorClear4f(rglVec4f_t *v);
+GLint rglVectorScale4d(rglVec4d_t *v, GLdouble scale );
+GLint  rglVectorScale4f(rglVec4f_t *v, GLfloat scale );
+GLint rglVectorAdd4d( rglVec4d_t *v1, rglVec4d_t v2);
+GLint rglVectorAdd4f( rglVec4f_t *v1, rglVec4f_t v2);
+GLint rglVectorSub4d( rglVec4d_t *v1, rglVec4d_t v2);
+GLint rglVectorSub4f( rglVec4f_t *v1, rglVec4f_t v2);
+GLdouble rglVectorDot4d( rglVec4d_t v1, rglVec4d_t v2);
+GLdouble rglVectorDot4f( rglVec4f_t v1, rglVec4f_t v2);
+GLdouble rglVectorLength4d(rglVec4d_t v);
+GLdouble rglVectorLength4f(rglVec4f_t v);
+GLint rglVectorNormalize4d(rglVec4d_t *v1);
+GLint rglVectorNormalize4f(rglVec4f_t *v1);
+GLint rglVector4ToVector3d(rglVec3d_t *dest, rglVec4d_t src);
+GLint rglVector4ToVector3f(rglVec3f_t *dest, rglVec4f_t src);
+GLint rglVector3ToVector4d(rglVec4d_t *dest, rglVec3d_t src);
+GLint rglVector3ToVector4f(rglVec4f_t *dest, rglVec3f_t src);
+GLint rglVectorCmp4d(rglVec4d_t v1, rglVec4d_t v2);
+GLint rglVectorCmp4f(rglVec4f_t v1, rglVec4f_t v2);
+GLint rglVectorPrint4d(rglVec4d_t v);
+GLint rglVectorPrint4f(rglVec4f_t v);
+GLint rglColorPrint4d(rglCol4d_t c);
+GLint rglColorPrint4f(rglCol4f_t c);
 
 //rglVec3_t rglVec4ToVec3(rglVec4_t v1);
 

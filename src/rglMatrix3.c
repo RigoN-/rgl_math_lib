@@ -8,7 +8,7 @@ rglMat3f_t mf_identity3={1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f};
 rglMat3d_t md_zero3={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 rglMat3f_t mf_zero3={0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 //--------------------------------MATRIX3-----------------------------------------------------------------------------------------------------
-GLint rglMatrix3dInitd(rglMat3d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8)
+GLint rglMatrixInit3d(rglMat3d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8)
 {
 	dest[0]=m0;dest[3]=m3;dest[6]=m6;
 	dest[1]=m1;dest[4]=m4;dest[7]=m7;
@@ -16,7 +16,7 @@ GLint rglMatrix3dInitd(rglMat3d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLd
 	return 1;
 }
 
-GLint rglMatrix3fInitf(rglMat3f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8)
+GLint rglMatrixInit3f(rglMat3f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8)
 {
 	dest[0]=m0;dest[3]=m3;dest[6]=m6;
 	dest[1]=m1;dest[4]=m4;dest[7]=m7;
@@ -24,73 +24,71 @@ GLint rglMatrix3fInitf(rglMat3f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloa
 	return 1;
 }
 
-GLint rglMatrix3dCopy(rglMat3d_t dest, rglMat3d_t src) 
+GLint rglMatrixCopy3d(rglMat3d_t dest, rglMat3d_t src) 
 {
 		memcpy(dest, src,sizeof(*dest)*9); 						
    return 1;   
 }
 
-GLint rglMatrix3fCopy(rglMat3f_t dest, rglMat3f_t src) 
+GLint rglMatrixCopy3f(rglMat3f_t dest, rglMat3f_t src) 
 {
 		memcpy(dest, src,sizeof(*dest)*9); 						
    return 1;   
 }
 
-GLint rglMatrix3dIdentity(rglMat3d_t dest)
+GLint rglMatrixIdentity3d(rglMat3d_t dest)
 {		
 	memcpy(dest, md_identity3,sizeof(*dest)*9); 			
 	return 1; 
 }
 
-GLint rglMatrix3fIdentity(rglMat3f_t dest)
+GLint rglMatrixIdentity3f(rglMat3f_t dest)
 {		
 	memcpy(dest, mf_identity3,sizeof(*dest)*9); 			
 	return 1; 
 }
 
-
-
-GLint rglMatrix3dMulInt(rglMat3d_t src, GLint d)
+GLint rglMatrixMultInt3d(rglMat3d_t src, GLint d)
 {
 	rglMat3d_t mt;
 	GLint i;
 	for(i=0;i<9;i+=1)
 		mt[i]=src[i]*d;
-	rglMatrix3dCopy(src,mt);
+	rglMatrixCopy3d(src,mt);
     return 1;
 }
 
-GLint rglMatrix3fMulInt(rglMat3f_t src, GLint d)
+GLint rglMatrixMultInt3f(rglMat3f_t src, GLint d)
 {
 	rglMat3f_t mt;
 	GLint i;
 	for(i=0;i<9;i+=1)
 		mt[i]=src[i]*d;
-	rglMatrix3fCopy(src,mt);
+	rglMatrixCopy3f(src,mt);
     return 1;
 }
 
-GLint rglMatrix3dMulFloat(rglMat3d_t src, GLdouble f)
+GLint rglMatrixMultFloat3d(rglMat3d_t src, GLdouble f)
 {
 	rglMat3d_t mt;
 	GLint i;
 	for(i=0;i<9;i+=1)
 		mt[i]=src[i]*f;
-	rglMatrix3dCopy(src,mt);
+	rglMatrixCopy3d(src,mt);
     return 1;
 }
 
-GLint rglMatrix3fMulFloat(rglMat3f_t src, GLfloat f)
+GLint rglMatrixMultFloat3f(rglMat3f_t src, GLfloat f)
 {
 	rglMat3f_t mt;
 	GLint i;
 	for(i=0;i<9;i+=1)
 		mt[i]=src[i]*f;
-	rglMatrix3fCopy(src,mt);
+	rglMatrixCopy3f(src,mt);
     return 1;
 }
 
-GLint rglMatrix3dMultiply(rglMat3d_t m1, rglMat3d_t m2)
+GLint rglMatrixMultiply3d(rglMat3d_t m1, rglMat3d_t m2)
 {
 	GLint n;
 	rglMat3d_t mt={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -108,11 +106,11 @@ GLint rglMatrix3dMultiply(rglMat3d_t m1, rglMat3d_t m2)
     for(n=0;n<9;n+=1)
       if(fabs(mt[n])<1e-6)
       	mt[n]=0.0;
-    rglMatrix3dCopy(m1,mt);  		 		      
+    rglMatrixCopy3d(m1,mt);  		 		      
     return 1;
 }
 
-GLint rglMatrix3fMultiply(rglMat3f_t m1, rglMat3f_t m2)
+GLint rglMatrixMultiply3f(rglMat3f_t m1, rglMat3f_t m2)
 {
 	GLint n;
 	rglMat3f_t mt={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -130,27 +128,27 @@ GLint rglMatrix3fMultiply(rglMat3f_t m1, rglMat3f_t m2)
     for(n=0;n<9;n+=1)
       if(fabs(mt[n])<1e-6)
       	mt[n]=0.0;
-    rglMatrix3fCopy(m1,mt);  		 		      
+    rglMatrixCopy3f(m1,mt);  		 		      
     return 1;
 }
 
-GLint rglMatrix3dTranspose(rglMat3d_t src) 
+GLint rglMatrixTranspose3d(rglMat3d_t src) 
 {
 	rglMat3d_t mt;
    mt[0] = src[0]; mt[3] = src[1]; mt[6] = src[2]; 
    mt[1] = src[3]; mt[4] = src[4]; mt[7] = src[5];
    mt[2] = src[6]; mt[5] = src[7]; mt[8] = src[8];
-   rglMatrix3dCopy(src,mt);  		 						
+   rglMatrixCopy3d(src,mt);  		 						
    return 1;
 }
 
-GLint rglMatrix3fTranspose(rglMat3f_t src) 
+GLint rglMatrixTranspose3f(rglMat3f_t src) 
 {
 	rglMat3f_t mt;
    mt[0] = src[0]; mt[3] = src[1]; mt[6] = src[2]; 
    mt[1] = src[3]; mt[4] = src[4]; mt[7] = src[5];
    mt[2] = src[6]; mt[5] = src[7]; mt[8] = src[8];
-   rglMatrix3fCopy(src,mt);  		 						
+   rglMatrixCopy3f(src,mt);  		 						
    return 1;
 }
 
@@ -160,19 +158,19 @@ GLint rglMatrix3fTranspose(rglMat3f_t src)
 // m2 m5 m8
 //
 //D=(m0*m4*m8+m1*m5*m6+m3*m7*m2)-(m6*m4*m2+m1*m3*m8+m0*m5*m7)
-GLdouble rglMatrix3dDet(rglMat3d_t m)
+GLdouble rglMatrixDet3d(rglMat3d_t m)
 {
   GLdouble det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;  							
   return   det;
 }
 
-GLfloat rglMatrix3fDet(rglMat3f_t m)
+GLfloat rglMatrixDet3f(rglMat3f_t m)
 {
   GLfloat det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;  							
   return   det;
 }
 
-GLint rglMatrix3dMinor(rglMat2d_t dest,rglMat3d_t src, GLint n) 
+GLint rglMatrixMinor3d(rglMat2d_t dest,rglMat3d_t src, GLint n) 
 {
 	
 	GLint k,r,c=0;
@@ -190,7 +188,7 @@ GLint rglMatrix3dMinor(rglMat2d_t dest,rglMat3d_t src, GLint n)
    return 0;
 }
 
-GLint rglMatrix3fMinor(rglMat2f_t dest,rglMat3f_t src, GLint n) 
+GLint rglMatrixMinor3f(rglMat2f_t dest,rglMat3f_t src, GLint n) 
 {
 	
 	GLint k,r,c=0;
@@ -209,42 +207,42 @@ GLint rglMatrix3fMinor(rglMat2f_t dest,rglMat3f_t src, GLint n)
 }
 
 
-GLdouble rglMatrix3dMinord(rglMat3d_t src, GLint n) 
+GLdouble rglMatrixMinord3d(rglMat3d_t src, GLint n) 
 {
 	rglMat2d_t mt;
-	rglMatrix3dMinor(mt,src,n);			
-    return rglMatrix2dDet(mt);
+	rglMatrixMinor3d(mt,src,n);			
+    return rglMatrixDet2d(mt);
 }
 
-GLdouble rglMatrix3fMinorf(rglMat3f_t src, GLint n) 
+GLdouble rglMatrixMinorf3f(rglMat3f_t src, GLint n) 
 {
 	rglMat2f_t mt;
-	rglMatrix3fMinor(mt,src,n);			
-    return rglMatrix2fDet(mt);
+	rglMatrixMinor3f(mt,src,n);			
+    return rglMatrixDet2f(mt);
 }
 
-GLint rglMatrix3dAdjoin(rglMat3d_t dest,rglMat3d_t src) 
+GLint rglMatrixAdjoin3d(rglMat3d_t dest,rglMat3d_t src) 
 {
 	GLint n;	
 	for (n=0;n<9;n+=1)
 	{		
 		if (n%2==0) 		
-		dest[n]=rglMatrix3dMinord(src,n);			
+		dest[n]=rglMatrixMinord3d(src,n);			
 		else
-		dest[n]=-rglMatrix3dMinord(src,n);
+		dest[n]=-rglMatrixMinord3d(src,n);
 	}    						
    return 0;
 }
 
-GLint rglMatrix3fAdjoin(rglMat3f_t dest,rglMat3f_t src) 
+GLint rglMatrixAdjoin3f(rglMat3f_t dest,rglMat3f_t src) 
 {
 	GLint n;	
 	for (n=0;n<9;n+=1)
 	{		
 		if (n%2==0) 		
-		dest[n]=rglMatrix3fMinorf(src,n);			
+		dest[n]=rglMatrixMinorf3f(src,n);			
 		else
-		dest[n]=-rglMatrix3fMinorf(src,n);
+		dest[n]=-rglMatrixMinorf3f(src,n);
 	}    						
    return 0;
 }
@@ -254,27 +252,27 @@ GLint rglMatrix3fAdjoin(rglMat3f_t dest,rglMat3f_t src)
  //   транспонировать полученную матрицу - в результате будет получена союзная матрица,
  //   разделить каждый элемент союзной матрицы на определитель исходной матрицы.
 
-GLint rglMatrix3dInverse(rglMat3d_t src)
+GLint rglMatrixInverse3d(rglMat3d_t src)
 {
   rglMat3d_t mt;
-  GLdouble det= rglMatrix3dDet(src);
+  GLdouble det= rglMatrixDet3d(src);
   if (det==0) return 0;
-  rglMatrix3dAdjoin(mt,src);
-  rglMatrix3dTranspose(mt);  
-  rglMatrix3dMulFloat(mt, 1/det);
-  rglMatrix3dCopy(src,mt); 
+  rglMatrixAdjoin3d(mt,src);
+  rglMatrixTranspose3d(mt);  
+  rglMatrixMultFloat3d(mt, 1/det);
+  rglMatrixCopy3d(src,mt); 
   return 0;
 }
 
-GLint rglMatrix3fInverse(rglMat3f_t src)
+GLint rglMatrixInverse3f(rglMat3f_t src)
 {
   rglMat3f_t mt;
-  GLfloat det= rglMatrix3fDet(src);
+  GLfloat det= rglMatrixDet3f(src);
   if (det==0) return 0;
-  rglMatrix3fAdjoin(mt,src);
-  rglMatrix3fTranspose(mt);  
-  rglMatrix3fMulFloat(mt, 1/det);
-  rglMatrix3fCopy(src,mt); 
+  rglMatrixAdjoin3f(mt,src);
+  rglMatrixTranspose3f(mt);  
+  rglMatrixMultFloat3f(mt, 1/det);
+  rglMatrixCopy3f(src,mt); 
   return 0;
 }
 
@@ -300,7 +298,7 @@ GLint rglMatrix3fInverse(rglMat3f_t src)
 }
 */
 
-GLint rglMatrix3dMulVector3d(const rglMat3d_t m, rglVec3d_t *v)
+GLint rglMatrixMulVector3d(const rglMat3d_t m, rglVec3d_t *v)
 {   
 	v->x =  v->x * m[0] + v->y * m[3] + v->z * m[6] ;
     v->y =  v->x * m[1] + v->y * m[4] + v->z * m[7];
@@ -308,7 +306,7 @@ GLint rglMatrix3dMulVector3d(const rglMat3d_t m, rglVec3d_t *v)
     return 0;
 }
 
-GLint rglMatrix3fMulVector3f(const rglMat3d_t m, rglVec3d_t *v)
+GLint rglMatrixfMulVector3f(const rglMat3d_t m, rglVec3d_t *v)
 {   
 	v->x =  v->x * m[0] + v->y * m[3] + v->z * m[6] ;
     v->y =  v->x * m[1] + v->y * m[4] + v->z * m[7];
@@ -318,7 +316,7 @@ GLint rglMatrix3fMulVector3f(const rglMat3d_t m, rglVec3d_t *v)
 
 
 
-GLint rglMatrix3dPrint(rglMat3d_t m, const char * header)
+GLint rglMatrixPrint3d(rglMat3d_t m, const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);
@@ -329,7 +327,7 @@ GLint rglMatrix3dPrint(rglMat3d_t m, const char * header)
 	return 0;
 }
 
-GLint rglMatrix3fPrint(rglMat3f_t m, const char * header)
+GLint rglMatrixPrint3f(rglMat3f_t m, const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);
