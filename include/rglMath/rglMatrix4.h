@@ -36,7 +36,7 @@ GLint rglMatrix4fInverse(rglMat4f_t src);
 GLint rglMatrixMultVector4d(const rglMat4d_t m, rglVec4d_t *v);
 GLint rglMatrixMultVector4f(const rglMat4f_t m, rglVec4f_t *v);
 GLint rglMatrix4MultVector3d(const rglMat4d_t m, rglVec3d_t *v);
-GLint rglMatrix4fMulVector3f(const rglMat4f_t m, rglVec3f_t *v);
+GLint rglMatrix4fMultVector3f(const rglMat4f_t m, rglVec3f_t *v);
 GLint rglMatrixPrint4d(rglMat4d_t m,const char * header);
 GLint rglMatrixPrint4f(rglMat4f_t  m,const char * header);
 

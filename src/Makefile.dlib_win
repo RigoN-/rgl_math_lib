@@ -1,0 +1,23 @@
+CC = gcc
+AR = ar
+C_STD= gnu99
+STD = -std=$(C_STD)
+name = librglMath
+TARGET = ../lib/win/$(name).dll
+INCS =  -I"../include/rglMath/"
+D_LIB = -DBUILD_DLL
+CFLAGS = $(INCS) $(D_LIB) -Wall -O2 -msse -msse2 -mfpmath=sse
+LIBS =  -lm
+SHARED = -s -shared
+LDFLAGS = $(SHARED) -L"." -Wl,--subsystem,windows,--out-implib,../lib/win/$(name)dll.a $(LIBS)
+OBJ  =  rglVector2.o rglVector3.o rglVector4.o rglMatrix2.o rglMatrix3.o rglMatrix4.o rglMatrixGL.o 
+
+%.o:%.c
+	$(CC) $(STD) $(CFLAGS) -c $^ -o $*.o $(LIBS)
+
+$(TARGET) : $(OBJ)
+	$(CC) $(STD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
+	del  *.o
+	
+clean:
+	del  *.o

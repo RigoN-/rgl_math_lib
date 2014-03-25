@@ -3,7 +3,7 @@
 
 
 #include "rglMath_t.h"
-#include "GL/gl.h"
+//#include "GL/gl.h"
 
 GLint rglFrustumd(rglMat4d_t dest, GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 GLint rglFrustumf(rglMat4f_t dest,GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar);

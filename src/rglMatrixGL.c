@@ -265,8 +265,10 @@ GLint rglMatrixNormalf(rglMat3f_t dest,rglMat4f_t src)
 	return 1;	
 }
 
+//перенести в test_lib
 
 //вывод матрицы загруженной в память 
+/*
 GLint rglMatrixMemPrint4d(GLuint matrix_type, const char * header)
 {
 	rglMat4d_t m;	
@@ -308,3 +310,4 @@ GLint rglGetMatrixMem4f(GLuint matrix_type, rglMat4f_t dest)
 		glGetFloatv(GL_PROJECTION_MATRIX, dest);	
 	return 1;
 }
+*/
