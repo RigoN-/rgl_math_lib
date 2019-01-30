@@ -1,0 +1,4 @@
+09.02.2017
+- в opengl матрицах убрать -0.0 значения
+- в rglVectorInitf заменить rglVectorInit4f
+- вернуть GLint rglGetMatrixMem4f(GLuint matrix_type, rglMat4f_t dest);

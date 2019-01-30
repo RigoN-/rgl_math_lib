@@ -1,7 +1,7 @@
-#include "../include/rglMath/rglMatrix3.h" 
-#include "../include/rglMath/rglMatrix2.h" 
-#include "../include/rglMath/rglVector2.h"
-#include "../include/rglMath/rglVector3.h"
+#include <rglMatrix3.h>
+#include <rglMatrix2.h>
+#include <rglVector2.h>
+#include <rglVector3.h>
 
 rglMat3d_t md_identity3={1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f};
 rglMat3f_t mf_identity3={1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f};
@@ -22,6 +22,18 @@ GLint rglMatrixInit3f(rglMat3f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat
 	dest[1]=m1;dest[4]=m4;dest[7]=m7;
 	dest[2]=m2;dest[5]=m5;dest[8]=m8;	
 	return 1;
+}
+
+GLint rglMatrixInitZero3d(rglMat3d_t dest)
+{		
+	memcpy(dest, md_zero3,sizeof(*dest)*9); 			
+	return 1; 
+}
+
+GLint rglMatrixInitZero3f(rglMat3f_t dest)
+{		
+	memcpy(dest, mf_zero3,sizeof(*dest)*9); 			
+	return 1; 
 }
 
 GLint rglMatrixCopy3d(rglMat3d_t dest, rglMat3d_t src) 
@@ -158,30 +170,33 @@ GLint rglMatrixTranspose3f(rglMat3f_t src)
 // m2 m5 m8
 //
 //D=(m0*m4*m8+m1*m5*m6+m3*m7*m2)-(m6*m4*m2+m1*m3*m8+m0*m5*m7)
+// проверено 14.02.17 через расчет инвертированной матрицы
 GLdouble rglMatrixDet3d(rglMat3d_t m)
 {
-  GLdouble det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;  							
+  GLdouble det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;
+//GLdouble det= (m[0]*(m[5]*m[8]-m[5]*m[4]) - m[3]*(m[2]*m[7]-m[1]*m[8]) + m[6]*(m[2]*m[4]-m[1]*m[5])) ;
   return   det;
 }
 
 GLfloat rglMatrixDet3f(rglMat3f_t m)
 {
-  GLfloat det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ;  							
+  GLfloat det= (m[0]*m[4]*m[8]+m[6]*m[1]*m[5]+m[3]*m[7]*m[2])-(m[6]*m[4]*m[2]+ m[0]*m[7]*m[5]+ m[3]*m[1]*m[8]) ; 
+ // GLfloat det= det= (m[0]*(m[5]*m[8]-m[5]*m[4]) - m[3]*(m[2]*m[7]-m[1]*m[8]) + m[6]*(m[2]*m[4]-m[1]*m[5])) ; ; 
+  
   return   det;
 }
 
 GLint rglMatrixMinor3d(rglMat2d_t dest,rglMat3d_t src, GLint n) 
 {
-	
 	GLint k,r,c=0;
-	GLint j=n/3;
-	GLint i=n%3;
+	GLint j=n%3;
+	GLint i=n/3;
 	for (k=0;k<3;k+=1)
 	for (r=0;r<3;r+=1)
 	{
 		if((k!=i) && r!=j)
 		{
-		dest[c]=src[r*3+k];
+		dest[c]=src[k*3+r];
 		c+=1;
 		}
 	}    						
@@ -190,16 +205,15 @@ GLint rglMatrixMinor3d(rglMat2d_t dest,rglMat3d_t src, GLint n)
 
 GLint rglMatrixMinor3f(rglMat2f_t dest,rglMat3f_t src, GLint n) 
 {
-	
 	GLint k,r,c=0;
-	GLint j=n/3;
-	GLint i=n%3;
+	GLint j=n%3;
+	GLint i=n/3;
 	for (k=0;k<3;k+=1)
 	for (r=0;r<3;r+=1)
 	{
 		if((k!=i) && r!=j)
 		{
-		dest[c]=src[r*3+k];
+		dest[c]=src[k*3+r];
 		c+=1;
 		}
 	}    						
@@ -230,6 +244,8 @@ GLint rglMatrixAdjoin3d(rglMat3d_t dest,rglMat3d_t src)
 		dest[n]=rglMatrixMinord3d(src,n);			
 		else
 		dest[n]=-rglMatrixMinord3d(src,n);
+	 if(fabs(dest[n])<EPSd)
+      	dest[n]=0.0;
 	}    						
    return 0;
 }
@@ -243,8 +259,10 @@ GLint rglMatrixAdjoin3f(rglMat3f_t dest,rglMat3f_t src)
 		dest[n]=rglMatrixMinorf3f(src,n);			
 		else
 		dest[n]=-rglMatrixMinorf3f(src,n);
-	}    						
-   return 0;
+	}  
+	if(fabs(dest[n])<EPSf)
+      	dest[n]=0.0;	
+	return 0;
 }
 //Из этих утверждений следует алгоритм нахождения обратной матрицы:
 //
@@ -259,7 +277,7 @@ GLint rglMatrixInverse3d(rglMat3d_t src)
   if (det==0) return 0;
   rglMatrixAdjoin3d(mt,src);
   rglMatrixTranspose3d(mt);  
-  rglMatrixMultFloat3d(mt, 1/det);
+  rglMatrixMultFloat3d(mt, 1.0/det);
   rglMatrixCopy3d(src,mt); 
   return 0;
 }
@@ -271,7 +289,7 @@ GLint rglMatrixInverse3f(rglMat3f_t src)
   if (det==0) return 0;
   rglMatrixAdjoin3f(mt,src);
   rglMatrixTranspose3f(mt);  
-  rglMatrixMultFloat3f(mt, 1/det);
+  rglMatrixMultFloat3f(mt, 1.0f/det);
   rglMatrixCopy3f(src,mt); 
   return 0;
 }
@@ -316,13 +334,50 @@ GLint rglMatrixfMulVector3f(const rglMat3d_t m, rglVec3d_t *v)
 
 
 
+GLint MatrixCmp3d(rglMat3d_t m1, rglMat3d_t m2)
+{
+	GLint result,i,n=0;
+	for(i=0;i<9;i+=1) {
+		if ((fabs(m1[i]-m2[i])<EPSd)){
+				n+=1;			
+		}
+		else
+		printf("m1[%i] = %0.12lf   m2[%i] = %0.12lf\n",i,m1[i],i,m2[i]);
+	}
+	if (n==9)
+		result=0;
+	else
+		result=1;
+		
+	return result;
+}
+
+GLint MatrixCmp3f(rglMat3f_t m1, rglMat3f_t m2)
+{
+	GLint result,i,n=0;
+	for(i=0;i<9;i+=1) {
+		if ((fabs(m1[i]-m2[i])<EPSf)){
+			n+=1;			
+		}
+		else
+			printf("m1[%i] = %0.6f   m2[%i] = %0.6f\n",i,m1[i],i,m2[i]);
+	}
+	if (n==9)
+		result=0;
+	else
+		result=1;
+		
+	return result;
+}
+
+
 GLint rglMatrixPrint3d(rglMat3d_t m, const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);
-	printf("m[0] = %4.8lf m[3] = %4.8lf m[6] = %4.8lf \n", m[0],m[3],m[6]);
-	printf("m[1] = %4.8lf m[4] = %4.8lf m[7] = %4.8lf \n", m[1],m[4],m[7]);
-	printf("m[2] = %4.8lf m[5] = %4.8lf m[8] = %4.8lf \n", m[2],m[5],m[8]);
+	printf("m[0] = %0.12f m[3] = %0.12f m[6] = %0.12f \n", m[0],m[3],m[6]);
+	printf("m[1] = %0.12f m[4] = %0.12f m[7] = %0.12f \n", m[1],m[4],m[7]);
+	printf("m[2] = %0.12f m[5] = %0.12f m[8] = %0.12f \n", m[2],m[5],m[8]);
 	printf("--------------------------------------------------------------------------------------------------\n");
 	return 0;
 }
@@ -331,9 +386,9 @@ GLint rglMatrixPrint3f(rglMat3f_t m, const char * header)
 {
 	if (header!=NULL)
 		printf("%s:\n",header);
-	printf("m[0] = %4.8f m[3] = %4.8f m[6] = %4.8f \n", m[0],m[3],m[6]);
-	printf("m[1] = %4.8f m[4] = %4.8f m[7] = %4.8f \n", m[1],m[4],m[7]);
-	printf("m[2] = %4.8f m[5] = %4.8f m[8] = %4.8f \n", m[2],m[5],m[8]);
+	printf("m[0] = %0.6f m[3] = %0.6f m[6] = %0.6f \n", m[0],m[3],m[6]);
+	printf("m[1] = %0.6f m[4] = %0.6f m[7] = %0.6f \n", m[1],m[4],m[7]);
+	printf("m[2] = %0.6f m[5] = %0.6f m[8] = %0.6f \n", m[2],m[5],m[8]);
 	printf("--------------------------------------------------------------------------------------------------\n");
 	return 0;
 }

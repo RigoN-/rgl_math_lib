@@ -29,6 +29,9 @@ GLint rglLookAtf(rglMat4f_t dest, rglVec3f_t v1, rglVec3f_t v2, rglVec3f_t v3);
 GLint rglMatrixNormald(rglMat3d_t dest,rglMat4d_t src);
 GLint rglMatrixNormalf(rglMat3f_t dest,rglMat4f_t src);
 
+GLint rglUnProjectd(GLdouble vx, GLdouble vy, GLdouble vz, rglMat4d_t mv, rglMat4d_t pv, GLint vp[4], GLdouble *x, GLdouble *y, GLdouble *z);
+GLint rglUnProjectf(GLfloat vx, GLfloat vy, GLfloat vz, rglMat4f_t mv, rglMat4f_t pv, GLint vp[4], GLfloat *x, GLfloat *y, GLfloat *z);
+
 GLint rglMatrixMemPrint4d(GLuint matrix_type, const char * header);
 GLint rglMatrixMemPrint4f(GLuint matrix_type, const char * header);
 

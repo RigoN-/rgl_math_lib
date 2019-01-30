@@ -1,0 +1,48 @@
+CC = gcc
+C_STD=gnu99
+STD = -std=$(C_STD)
+OS =win
+ARH = x64
+NAME = librglMath
+PATH_LIBS = ../lib/$(OS)/$(ARH)/
+INCS =-I"../include/rglMath/"
+LIBS = -lm
+D_LIB = -DBUILD_DLL
+SHARED = -s -shared
+AR = ar
+ARFLAGS = rcs
+
+TARGET_STATIC = $(PATH_LIBS)$(NAME)_$(ARH).a
+TARGET_SHARED = $(PATH_LIBS)$(NAME)_$(ARH).dll
+
+CFLAGS_STATIC = $(INCS) -Wall -static -O2 -msse -msse2 -mfpmath=sse
+CFLAGS_SHARED = $(INCS) $(D_LIB) -Wall -O2 -msse -msse2 -mfpmath=sse
+
+LDFLAGS_SHARED = $(SHARED) -L"." -Wl,--subsystem,windows,--out-implib,$(PATH_LIBS)$(NAME)dll_$(ARH).a $(LIBS)
+LDFLAGS_STATIC = -L"." -Wl,-rpath,. $(LIBS)
+
+
+OBJ_RGLMATH_STATIC  = rglVector2.o rglVector3.o rglVector4.o rglMatrix2.o rglMatrix3.o rglMatrix4.o rglMatrixGL.o 
+OBJ_RGLMATH_SHARED  = rglVector2.lo rglVector3.lo rglVector4.lo rglMatrix2.lo rglMatrix3.lo rglMatrix4.lo rglMatrixGL.lo 
+
+
+%.o:%.c
+	$(CC) $(STD) $(CFLAGS_STATIC) -c $^ -o $*.o $(LIBS)
+
+ALL: $(TARGET_STATIC) $(TARGET_SHARED)
+
+
+
+$(TARGET_STATIC) : $(OBJ_RGLMATH_STATIC)
+	$(AR) $(ARFLAGS)  $@ $(OBJ_RGLMATH_STATIC)
+	del  *.o
+
+%.lo:%.c
+	$(CC) $(STD) $(CFLAGS_SHARED) -c $^ -o $*.lo $(LIBS)
+
+$(TARGET_SHARED) : $(OBJ_RGLMATH_SHARED)
+	$(CC) $(STD) $(LDFLAGS_SHARED) -o $@ $(OBJ_RGLMATH_SHARED)
+	del  *.lo
+
+clean:
+	del  *.o *.lo

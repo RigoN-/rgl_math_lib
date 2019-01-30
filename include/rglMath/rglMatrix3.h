@@ -7,6 +7,8 @@
  //matrix3
 GLint rglMatrixInit3d(rglMat3d_t dest, GLdouble m0, GLdouble m1,GLdouble m2,GLdouble m3,GLdouble m4,GLdouble m5,GLdouble m6,GLdouble m7,GLdouble m8);
 GLint rglMatrixInit3f(rglMat3f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat m3,GLfloat m4,GLfloat m5,GLfloat m6,GLfloat m7,GLfloat m8);
+GLint rglMatrixInitZero3d(rglMat3d_t dest);
+GLint rglMatrixInitZero3f(rglMat3f_t dest);
 GLint rglMatrixCopy3d(rglMat3d_t dest, rglMat3d_t src); 
 GLint rglMatrixCopy3f(rglMat3f_t dest, rglMat3f_t src); 
 GLint rglMatrixIdentity3d(rglMat3d_t dest);
@@ -31,6 +33,8 @@ GLint rglMatrixInverse3d(rglMat3d_t src);
 GLint rglMatrixInverse3f(rglMat3f_t src);
 GLint rglMatrixMulVector3d(const rglMat3d_t m, rglVec3d_t *v);
 GLint rglMatrixfMulVector3f(const rglMat3d_t m, rglVec3d_t *v);
+GLint MatrixCmp3d(rglMat3d_t m1, rglMat3d_t m2);
+GLint MatrixCmp3f(rglMat3f_t m1, rglMat3f_t m2);
 GLint rglMatrixPrint3d(rglMat3d_t m, const char * header);
 GLint rglMatrixPrint3f(rglMat3f_t m, const char * header);
 

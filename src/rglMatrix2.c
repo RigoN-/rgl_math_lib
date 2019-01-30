@@ -1,8 +1,8 @@
-#include "../include/rglMath/rglMatrix2.h" 
+#include <rglMatrix2.h> 
 
-rglMat2d_t md_identity2={1.0f,0.0f,0.0f,1.0f};
+rglMat2d_t md_identity2={1.0,0.0,0.0,1.0};
 rglMat2f_t mf_identity2={1.0f,0.0f,0.0f,1.0f};
-rglMat2d_t md_zero2={0.0f,0.0f,0.0f,0.0f};
+rglMat2d_t md_zero2={0.0,0.0,0.0,0.0};
 rglMat2f_t mf_zero2={0.0f,0.0f,0.0f,0.0f};
 
 
@@ -20,6 +20,19 @@ GLint rglMatrixInit2f(rglMat2f_t dest, GLfloat m0, GLfloat m1,GLfloat m2,GLfloat
 	dest[1]=m1;dest[3]=m3;	
 	return 1;
 }
+
+GLint rglMatrixInitZero2d(rglMat2d_t dest)
+{			
+	memcpy(dest, md_zero2,sizeof(*dest)*4); 			
+	return 1; 
+}
+
+GLint rglMatrixInitZero2f(rglMat2f_t dest)
+{			
+	memcpy(dest, mf_zero2,sizeof(*dest)*4); 			
+	return 1; 
+}
+
 
 GLint rglMatrixIdentity2d(rglMat2d_t dest)
 {			
@@ -101,4 +114,61 @@ GLint rglMatrixMultiply2f(rglMat2f_t m1, rglMat2f_t m2)
       	mt[n]=0.0;
     rglMatrixCopy2f(m1,mt);  		 
     return 1;
+}
+
+GLint MatrixCmp2d(rglMat2d_t m1, rglMat2d_t m2)
+{
+	GLint result,i,n=0;
+	for(i=0;i<4;i+=1) {
+		if ((fabs(m1[i]-m2[i])<EPSd)){
+				n+=1;			
+		}
+		else
+		printf("m1[%i] = %0.12lf   m2[%i] = %0.12lf\n",i,m1[i],i,m2[i]);
+	}
+	if (n==4)
+		result=0;
+	else
+		result=1;
+		
+	return result;
+}
+
+GLint MatrixCmp2f(rglMat2f_t m1, rglMat2f_t m2)
+{
+	GLint result,i,n=0;
+	for(i=0;i<4;i+=1) {
+		if ((fabs(m1[i]-m2[i])<EPSf)){
+			n+=1;			
+		}
+		else
+			printf("m1[%i] = %0.6f   m2[%i] = %0.6f\n",i,m1[i],i,m2[i]);
+	}
+	if (n==4)
+		result=0;
+	else
+		result=1;
+		
+	return result;
+}
+
+
+GLint rglMatrixPrint2d(rglMat2d_t m, const char * header)
+{
+	if (header!=NULL)
+		printf("%s:\n",header);
+	printf("m[0] = %0.12lf m[2] = %0.12f \n", m[0],m[2]);
+	printf("m[1] = %0.12lf m[3] = %0.12f \n", m[1],m[3]);	
+	printf("--------------------------------------------------------------------------------------------------\n");
+	return 0;
+}
+
+GLint rglMatrixPrint2f(rglMat2f_t m, const char * header)
+{
+	if (header!=NULL)
+		printf("%s:\n",header);
+	printf("m[0] = %0.6f m[2] = %0.6f \n", m[0],m[2]);
+	printf("m[1] = %0.6f m[3] = %0.6f \n", m[1],m[3]);	
+	printf("--------------------------------------------------------------------------------------------------\n");
+	return 0;
 }
